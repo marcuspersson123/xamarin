@@ -21,7 +21,7 @@ namespace camera_android
 		Java.IO.File _file;
 		Java.IO.File _dir;
 		ImageView _imageView;
-		int count = 1;
+
 
 		protected override void OnCreate (Bundle bundle)
 		{

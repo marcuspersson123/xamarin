@@ -44,6 +44,8 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="Mono.Android" />
+    <Reference Include="Mono.Data.Sqlite" />
+    <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
@@ -55,6 +57,7 @@
     <Compile Include="ImageRepositoryADO.cs" />
     <Compile Include="ImageManager.cs" />
     <Compile Include="ImageDatabase.cs" />
+    <Compile Include="Image.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

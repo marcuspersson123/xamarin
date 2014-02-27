@@ -26,10 +26,23 @@ namespace camera_android
 
 		}
 
+
+
 		Java.IO.File _file;
 		Java.IO.File _dir;
 		private string _fileName;
 		string _folderName;
+
+		// TODO: base64
+		/*
+		public static string Base64EncodePicture(string fileName) {
+			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();  
+			bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+			byte[] byteArray = byteArrayOutputStream .toByteArray();
+			string encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+			return encoded;
+		}
+		*/
 
 		public ImageHelper (Context context)
 		{

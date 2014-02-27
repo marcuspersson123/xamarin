@@ -15,75 +15,88 @@ using Environment = Android.OS.Environment;
 
 namespace camera_android
 {
+
 	[Activity (Label = "camera_android", MainLauncher = true)]
 	public class MainActivity : Activity
 	{
-		Java.IO.File _file;
-		Java.IO.File _dir;
 		ImageView _imageView;
-
+		ImageHelper _imageHelper;
+		Button _button;
 
 		protected override void OnCreate (Bundle bundle)
 		{
-			base.OnCreate(bundle);
-			SetContentView(Resource.Layout.Main);
+			base.OnCreate (bundle);
+			SetContentView (Resource.Layout.Main);
+			_button = FindViewById<Button> (Resource.Id.myButton);
+			_imageView = FindViewById<ImageView> (Resource.Id.imageView1);
 
-			if (IsThereAnAppToTakePictures())
-			{
-				CreateDirectoryForPictures();
 
-				Button button = FindViewById<Button>(Resource.Id.myButton);
-				_imageView = FindViewById<ImageView>(Resource.Id.imageView1);
+			if (LastNonConfigurationInstance != null) {
+				_imageHelper = (ImageHelper)LastNonConfigurationInstance;
+				if (_imageHelper.ImageValid) {
+					displayInImageView ();
+				}
 
-				button.Click += TakeAPicture;
+			} else {
+				_imageHelper = new ImageHelper (this.ApplicationContext);
+				_imageHelper.CreateDirectoryForPictures ("xamarin_images");
+			}
+				
+			if (_imageHelper.IsThereAnAppToTakePictures ()) {
+				_button.Click += TakeAPictureButtonClick;
+			} else {
+				_button.Text = "No camera!";
 			}
 		}
 
-		private bool IsThereAnAppToTakePictures()
-		{
-			Intent intent = new Intent(MediaStore.ActionImageCapture);
-			IList<ResolveInfo> availableActivities = PackageManager.QueryIntentActivities(intent, PackageInfoFlags.MatchDefaultOnly);
-			return availableActivities != null && availableActivities.Count > 0;
+		protected override void OnResume() {
+			base.OnResume ();
+
 		}
 
-		private void CreateDirectoryForPictures()
+		public override Java.Lang.Object OnRetainNonConfigurationInstance ()
 		{
-			_dir = new File(Environment.GetExternalStoragePublicDirectory(Environment.DirectoryPictures), "CameraAppDemo");
-			if (!_dir.Exists())
-			{
-				_dir.Mkdirs();
-			}
+			base.OnRetainNonConfigurationInstance ();
+			return (Java.Lang.Object) _imageHelper;
 		}
 
-		private void TakeAPicture(object sender, EventArgs eventArgs)
+		private void TakeAPictureButtonClick (object sender, EventArgs eventArgs)
 		{
-			Intent intent = new Intent(MediaStore.ActionImageCapture);
-
-			_file = new File(_dir, String.Format("myPhoto_{0}.jpg", Guid.NewGuid()));
-
-			intent.PutExtra(MediaStore.ExtraOutput, Uri.FromFile(_file));
-
-			StartActivityForResult(intent, 0);
+			_imageHelper.CreateRandomFilename ();
+			_imageHelper.createFile ();
+			Intent intent = new Intent (MediaStore.ActionImageCapture);
+			intent.PutExtra (MediaStore.ExtraOutput, Uri.FromFile (_imageHelper.File));
+			StartActivityForResult (intent, 0);
 		}
 
-		protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+		void displayInImageView ()
 		{
-			base.OnActivityResult(requestCode, resultCode, data);
-
-			// make it available in the gallery
-			Intent mediaScanIntent = new Intent(Intent.ActionMediaScannerScanFile);
-			Uri contentUri = Uri.FromFile(_file);
-			mediaScanIntent.SetData(contentUri);
-			SendBroadcast(mediaScanIntent);
-
 			// display in ImageView. We will resize the bitmap to fit the display
 			// Loading the full sized image will consume to much memory 
 			// and cause the application to crash.
-			int height = _imageView.Height;
-			int width = Resources.DisplayMetrics.WidthPixels;
-			using (Bitmap bitmap = _file.Path.LoadAndResizeBitmap(width, height))
-			{
-				_imageView.SetImageBitmap(bitmap);
+			int height = (int) (Resources.DisplayMetrics.HeightPixels*0.6);
+			int width = (int) (Resources.DisplayMetrics.WidthPixels*0.8);
+			File file = _imageHelper.File;
+			if (height < width) {
+				int temp = height;
+				height = width;
+				width = temp;
+			}
+			using (Bitmap bitmap = file.Path.LoadAndResizeBitmap (width, height)) {
+				_imageView.SetImageBitmap (bitmap);
+			}
+		}
+
+		protected override void OnActivityResult (int requestCode, Result resultCode, Intent data)
+		{
+			base.OnActivityResult (requestCode, resultCode, data);
+
+			if (resultCode == Result.Ok) {
+				_imageHelper.ImageValid = true;
+				_imageHelper.publishToGallery ();
+				this.displayInImageView ();
+			} else {
+				_imageHelper.deleteFile ();
 			}
 		}
 	}

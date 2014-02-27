@@ -1,4 +1,5 @@
-﻿using System;
+﻿/*
+using System;
 
 namespace camera_android
 {
@@ -158,4 +159,4 @@ namespace camera_android
 
 }
 
-
+*/

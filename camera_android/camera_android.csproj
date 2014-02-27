@@ -52,6 +52,9 @@
     <Compile Include="BitmapHelpers.cs" />
     <Compile Include="sqltosaverestore.cs" />
     <Compile Include="ImageHelper.cs" />
+    <Compile Include="ImageRepositoryADO.cs" />
+    <Compile Include="ImageManager.cs" />
+    <Compile Include="ImageDatabase.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

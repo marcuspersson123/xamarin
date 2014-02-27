@@ -1,8 +1,13 @@
 ﻿<Properties GitUserInfo="UsingGIT">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="camera_android/MainActivity.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="camera_android/sqltosaverestore.cs">
     <Files>
       <File FileName="camera_android/MainActivity.cs" Line="1" Column="1" />
+      <File FileName="camera_android/sqltosaverestore.cs" Line="1" Column="3" />
+      <File FileName="camera_android/BitmapHelpers.cs" Line="1" Column="1" />
+      <File FileName="camera_android/ImageHelper.cs" Line="1" Column="1" />
+      <File FileName="camera_android/Properties/AndroidManifest.xml" Line="1" Column="1" />
+      <File FileName="camera_android/Properties/AssemblyInfo.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

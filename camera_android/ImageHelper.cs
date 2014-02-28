@@ -15,20 +15,37 @@ namespace camera_android
 {
 	public class ImageHelper : Java.Lang.Object
 	{
-		public void persistToSqlite ()
+		public camera_android.Core.Image Image {
+			get {return _image;  }
+
+		}
+
+		Image _image;
+
+		public bool GenerateItem ()
 		{
+			bool success = false;
 			File file = File;
 			camera_android.Core.Image image = new camera_android.Core.Image ();
 
-			using (Bitmap bitmap = BitmapFactory.DecodeFile (file.Path)) {
+			try {
+				Bitmap bitmap = BitmapFactory.DecodeFile (file.Path);
 				image.Photo = bitmap;
 				image.Latitude = "1.2";
 				image.Longitude = "1.3";
 				image.Note = "test";
 				image.Time = "343434";
-				ImageManager.SaveImage (image);
-			}
+				_image = image;
+				success = true;
+			} catch (Exception e) {
 
+			}
+			return success;
+		}
+
+		public void persistToSqlite ()
+		{
+			ImageManager.SaveImage (_image);
 		}
 
 		bool _imageValid = false;

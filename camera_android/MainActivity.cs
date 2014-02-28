@@ -82,9 +82,9 @@ namespace camera_android
 				height = width;
 				width = temp;
 			}
-			using (Bitmap bitmap = file.Path.LoadAndResizeBitmap (width, height)) {
-				_imageView.SetImageBitmap (bitmap);
-			}
+			//using (Bitmap bitmap = file.Path.LoadAndResizeBitmap (width, height)) {
+			_imageView.SetImageBitmap (_imageHelper.Image.Photo);
+			//}
 		}
 
 		protected override void OnActivityResult (int requestCode, Result resultCode, Intent data)
@@ -93,10 +93,12 @@ namespace camera_android
 
 			if (resultCode == Result.Ok) {
 				_imageHelper.ImageValid = true;
-
-				_imageHelper.publishToGallery ();
-				_imageHelper.persistToSqlite ();
-				this.displayInImageView ();
+				bool success = _imageHelper.GenerateItem ();
+				if (success) {
+					_imageHelper.publishToGallery ();
+					_imageHelper.persistToSqlite ();
+					this.displayInImageView ();
+				}
 			} else {
 				_imageHelper.deleteFile ();
 			}

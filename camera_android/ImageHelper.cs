@@ -15,6 +15,14 @@ namespace camera_android
 {
 	public class ImageHelper : Java.Lang.Object
 	{
+		public void loadImage (int id)
+		{
+			IList<Image> images = ImageManager.GetImages ();
+			if (images.Count > 0) {
+				_image = images[0];
+			}
+		}
+
 		public camera_android.Core.Image Image {
 			get {return _image;  }
 
@@ -61,23 +69,10 @@ namespace camera_android
 
 		}
 
-
-
 		Java.IO.File _file;
 		Java.IO.File _dir;
 		private string _fileName;
 		string _folderName;
-
-		// TODO: base64
-		/*
-		public static string Base64EncodePicture(string fileName) {
-			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();  
-			bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-			byte[] byteArray = byteArrayOutputStream .toByteArray();
-			string encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
-			return encoded;
-		}
-		*/
 
 		public ImageHelper (Context context)
 		{
@@ -136,6 +131,7 @@ namespace camera_android
 		{
 			_file.Delete ();
 		}
+
 	}
 }
 

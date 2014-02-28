@@ -12,10 +12,10 @@ using System.Collections.Generic;
 using Android.Content.PM;
 using Java.IO;
 using Environment = Android.OS.Environment;
+using System.Threading;
 
 namespace camera_android
 {
-
 	[Activity (Label = "camera_android", MainLauncher = true)]
 	public class MainActivity : Activity
 	{
@@ -47,17 +47,22 @@ namespace camera_android
 			} else {
 				_button.Text = "No camera!";
 			}
-		}
 
-		protected override void OnResume() {
-			base.OnResume ();
-
+			if (_imageHelper.Image == null) {
+				_imageHelper.loadImage (1);
+			} else if (_imageHelper.Image.Photo == null) {
+				_imageHelper.loadImage (1);
+				
+			}
+			if (_imageHelper.Image != null && _imageHelper.Image.Photo != null) {
+				displayInImageView ();
+			}
 		}
 
 		public override Java.Lang.Object OnRetainNonConfigurationInstance ()
 		{
 			base.OnRetainNonConfigurationInstance ();
-			return (Java.Lang.Object) _imageHelper;
+			return (Java.Lang.Object)_imageHelper;
 		}
 
 		private void TakeAPictureButtonClick (object sender, EventArgs eventArgs)
@@ -74,8 +79,8 @@ namespace camera_android
 			// display in ImageView. We will resize the bitmap to fit the display
 			// Loading the full sized image will consume to much memory 
 			// and cause the application to crash.
-			int height = (int) (Resources.DisplayMetrics.HeightPixels*0.6);
-			int width = (int) (Resources.DisplayMetrics.WidthPixels*0.8);
+			int height = (int)(Resources.DisplayMetrics.HeightPixels * 0.6);
+			int width = (int)(Resources.DisplayMetrics.WidthPixels * 0.8);
 			File file = _imageHelper.File;
 			if (height < width) {
 				int temp = height;
@@ -96,7 +101,8 @@ namespace camera_android
 				bool success = _imageHelper.GenerateItem ();
 				if (success) {
 					_imageHelper.publishToGallery ();
-					_imageHelper.persistToSqlite ();
+					ThreadPool.QueueUserWorkItem (o => _imageHelper.persistToSqlite ());
+
 					this.displayInImageView ();
 				}
 			} else {

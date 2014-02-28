@@ -88,7 +88,7 @@ namespace camera_android.Core
 				connection = new SqliteConnection ("Data Source=" + path);
 				connection.Open ();
 				using (var command = connection.CreateCommand ()) {
-					command.CommandText = "SELECT * WHERE [_id] = ?";
+					command.CommandText = "SELECT * from [Items] WHERE [_id] = ?";
 					command.Parameters.Add (new SqliteParameter (DbType.Int32) { Value = id });
 					var r = command.ExecuteReader ();
 					while (r.Read ()) {
@@ -130,7 +130,7 @@ namespace camera_android.Core
 						command.Parameters.Add (new SqliteParameter (DbType.String) { Value = item.Note });
 						command.Parameters.Add (new SqliteParameter (DbType.String) { Value = item.Longitude });
 						command.Parameters.Add (new SqliteParameter (DbType.String) { Value = item.Latitude });
-						command.Parameters.Add (new SqliteParameter (DbType.Int32) { Value = item.Time });
+						command.Parameters.Add (new SqliteParameter (DbType.String) { Value = item.Time });
 						byte[] photo = ImageHelper.GetBytes (item.Photo);
 						command.Parameters.Add (new SqliteParameter (DbType.Binary) { Value = photo });
 						r = command.ExecuteNonQuery ();

@@ -7,12 +7,30 @@ using Java.IO;
 using Environment = Android.OS.Environment;
 using Android.Content;
 using Android.Provider;
+using Android.Graphics;
+using camera_android.Core;
 
 
 namespace camera_android
 {
 	public class ImageHelper : Java.Lang.Object
 	{
+		public void persistToSqlite ()
+		{
+			File file = File;
+			camera_android.Core.Image image = new camera_android.Core.Image ();
+
+			using (Bitmap bitmap = BitmapFactory.DecodeFile (file.Path)) {
+				image.Photo = bitmap;
+				image.Latitude = "1.2";
+				image.Longitude = "1.3";
+				image.Note = "test";
+				image.Time = "343434";
+				ImageManager.SaveImage (image);
+			}
+
+		}
+
 		bool _imageValid = false;
 
 		public bool ImageValid {
@@ -84,6 +102,17 @@ namespace camera_android
 			mediaScanIntent.SetData (contentUri);
 			_context.SendBroadcast (mediaScanIntent);
 
+		}
+
+		public static byte[] GetBytes(Bitmap bitmap) {
+			System.IO.MemoryStream stream = new System.IO.MemoryStream();
+			bitmap.Compress(Android.Graphics.Bitmap.CompressFormat.Png, 0, stream);
+			return stream.ToArray();
+		}
+
+		// convert from byte array to bitmap
+		public static Bitmap GetPhoto(byte[] image) {
+			return BitmapFactory.DecodeByteArray(image, 0, image.Length);
 		}
 
 		public void deleteFile ()

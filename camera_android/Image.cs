@@ -19,9 +19,9 @@ namespace camera_android.Core
 
 		public string Latitude { get; set; }
 
-		public DateTime Time { get; set; }
+		public string Time { get; set; }
 
-		public string ImageBase64 { get; set; }
+		public Android.Graphics.Bitmap Photo { get; set; }
 
 	}
 }

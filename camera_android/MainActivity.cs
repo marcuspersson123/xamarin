@@ -93,7 +93,9 @@ namespace camera_android
 
 			if (resultCode == Result.Ok) {
 				_imageHelper.ImageValid = true;
+
 				_imageHelper.publishToGallery ();
+				_imageHelper.persistToSqlite ();
 				this.displayInImageView ();
 			} else {
 				_imageHelper.deleteFile ();

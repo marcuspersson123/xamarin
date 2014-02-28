@@ -33,12 +33,12 @@ namespace camera_android.Core
 				connection.Open ();
 				var commands = new[] {
 					// TODO: datatyper
-					"CREATE TABLE [Items] (_id INTEGER PRIMARY KEY ASC, note NTEXT, longitude REAL, latitude REAL, time NTEXT, image NTEXT);"
+					"CREATE TABLE [Items] (_id INTEGER PRIMARY KEY ASC, note NTEXT, longitude NTEXT, latitude NTEXT, time NTEXT, image BLOB);"
 				};
 				foreach (var command in commands) {
 					using (var c = connection.CreateCommand ()) {
 						c.CommandText = command;
-						var i = c.ExecuteNonQuery ();
+						c.ExecuteNonQuery ();
 					}
 				}
 			} else {
@@ -54,8 +54,9 @@ namespace camera_android.Core
 			t.ID = Convert.ToInt32 (r ["_id"]);
 			t.Latitude = r ["latitude"].ToString ();
 			t.Longitude = r ["longitude"].ToString ();
-			t.ImageBase64 = r ["image"].ToString ();
-			t.Time = DateTime.Today;
+			byte[] blob = (byte[]) r ["image"] ;
+			t.Photo = ImageHelper.GetPhoto(blob);
+			t.Time = r["time"].ToString();
 			t.Note = r ["note"].ToString ();
 
 			return t;
@@ -110,10 +111,11 @@ namespace camera_android.Core
 					using (var command = connection.CreateCommand ()) {
 						command.CommandText = "UPDATE [Items] SET [note] = ?, [longitude] = ?, [latitude] = ?, [time] = ?, [image] = ? WHERE [_id] = ?;";
 						command.Parameters.Add (new SqliteParameter (DbType.String) { Value = item.Note });
-						command.Parameters.Add (new SqliteParameter (DbType.Double) { Value = item.Longitude });
-						command.Parameters.Add (new SqliteParameter (DbType.Double) { Value = item.Latitude });
-						command.Parameters.Add (new SqliteParameter (DbType.Int32) { Value = item.Time });
-						command.Parameters.Add (new SqliteParameter (DbType.String) { Value = item.ImageBase64 });
+						command.Parameters.Add (new SqliteParameter (DbType.String) { Value = item.Longitude });
+						command.Parameters.Add (new SqliteParameter (DbType.String) { Value = item.Latitude });
+						command.Parameters.Add (new SqliteParameter (DbType.String) { Value = item.Time });
+						byte[] photo = ImageHelper.GetBytes (item.Photo);
+						command.Parameters.Add (new SqliteParameter (DbType.Binary) { Value = photo });
 						command.Parameters.Add (new SqliteParameter (DbType.Int32) { Value = item.ID });
 						r = command.ExecuteNonQuery ();
 					}
@@ -126,10 +128,11 @@ namespace camera_android.Core
 						command.CommandText = "INSERT INTO [Items] ([note], [longitude], [latitude], [time], [image]) VALUES (? ,?, ?, ?, ?)";
 
 						command.Parameters.Add (new SqliteParameter (DbType.String) { Value = item.Note });
-						command.Parameters.Add (new SqliteParameter (DbType.Double) { Value = item.Longitude });
-						command.Parameters.Add (new SqliteParameter (DbType.Double) { Value = item.Latitude });
+						command.Parameters.Add (new SqliteParameter (DbType.String) { Value = item.Longitude });
+						command.Parameters.Add (new SqliteParameter (DbType.String) { Value = item.Latitude });
 						command.Parameters.Add (new SqliteParameter (DbType.Int32) { Value = item.Time });
-						command.Parameters.Add (new SqliteParameter (DbType.String) { Value = item.ImageBase64 });
+						byte[] photo = ImageHelper.GetBytes (item.Photo);
+						command.Parameters.Add (new SqliteParameter (DbType.Binary) { Value = photo });
 						r = command.ExecuteNonQuery ();
 					}
 					connection.Close ();

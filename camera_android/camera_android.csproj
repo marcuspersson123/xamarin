@@ -63,6 +63,7 @@
     <None Include="Properties\AndroidManifest.xml" />
     <None Include="Assets\prototyp_1.tiff" />
     <None Include="Assets\prototyp2.tiff" />
+    <None Include="Assets\prototyp3.tiff" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\Main.axml" />

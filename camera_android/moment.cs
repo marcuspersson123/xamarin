@@ -5,9 +5,9 @@ namespace camera_android.Core
 	/// <summary>
 	/// Image business object
 	/// </summary>
-	public class Image
+	public class Moment
 	{
-		public Image ()
+		public Moment ()
 		{
 		}
 

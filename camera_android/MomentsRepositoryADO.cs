@@ -4,28 +4,28 @@ using System.IO;
 
 namespace camera_android.Core
 {
-	public class ImageRepositoryADO {
-		ImageDatabase db = null;
+	public class MomentsRepositoryADO {
+		MomentDatabase db = null;
 		protected static string dbLocation;		
-		protected static ImageRepositoryADO me;		
+		protected static MomentsRepositoryADO me;		
 
-		static ImageRepositoryADO ()
+		static MomentsRepositoryADO ()
 		{
-			me = new ImageRepositoryADO();
+			me = new MomentsRepositoryADO();
 		}
 
-		protected ImageRepositoryADO ()
+		protected MomentsRepositoryADO ()
 		{
 			// set the db location
 			dbLocation = DatabaseFilePath;
 
 			// instantiate the database	
-			db = new ImageDatabase(dbLocation);
+			db = new MomentDatabase(dbLocation);
 		}
 
 		public static string DatabaseFilePath {
 			get { 
-				var sqliteFilename = "ImageDatabase.db3";
+				var sqliteFilename = "MomentsDatabase.db3";
 				#if NETFX_CORE
 				var path = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, sqliteFilename);
 				#else
@@ -52,24 +52,35 @@ namespace camera_android.Core
 			}
 		}
 
-		public static Image GetImage(int id)
+		public static Moment GetMoment(int id, bool shallow)
 		{
-			return me.db.GetItem(id);
+			return me.db.GetMoment(id, shallow);
 		}
 
-		public static IEnumerable<Image> GetImages ()
+		public static IEnumerable<Moment> GetMoments (bool shallow)
 		{
-			return me.db.GetItems();
+			return me.db.GetMoments(shallow);
 		}
 
-		public static int SaveImage (Image item)
+		public static int SaveMoment (Moment moment)
 		{
-			return me.db.SaveItem(item);
+			return me.db.SaveMoment(moment);
 		}
 
-		public static int DeleteImage(int id)
+		public static int DeleteMoment(int id)
 		{
-			return me.db.DeleteItem(id);
+			return me.db.DeleteMoment(id);
+		}
+
+		public static void GetPhoto(Moment moment) {
+			byte[] photoBytes = me.db.LoadPhoto (moment.ID);
+			moment.Photo = BitmapFactory.DecodeByteArray(photoBytes, 0, photoBytes.Length);
+		}
+
+		public static byte[] GetBytes(Bitmap bitmap) {
+			System.IO.MemoryStream stream = new System.IO.MemoryStream();
+			bitmap.Compress(Android.Graphics.Bitmap.CompressFormat.Png, 0, stream);
+			return stream.ToArray();
 		}
 	}
 }

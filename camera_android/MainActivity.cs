@@ -16,98 +16,113 @@ using System.Threading;
 
 namespace camera_android
 {
+	public class NonConfiguration {
+	}
+
 	[Activity (Label = "camera_android", MainLauncher = true)]
 	public class MainActivity : Activity
 	{
+		NonConfiguration _nonConfiguration;
 		ImageView _imageView;
-		ImageHelper _imageHelper;
-		Button _button;
+		Button _newMomentButton;
+		Java.IO.File _file;
+		Java.IO.File _dir;
+		camera_android.Core.Moment _moment;
+
+		public void publishToGallery ()
+		{
+			// make it available in the gallery
+			Intent mediaScanIntent = new Intent (Intent.ActionMediaScannerScanFile);
+			Uri contentUri = Uri.FromFile (_file);
+			mediaScanIntent.SetData (contentUri);
+			SendBroadcast (mediaScanIntent);
+
+		}
+
+		public void persistToSqlite ()
+		{
+			MomentManager.Save (_moment);
+		}
+
+		public bool IsThereAnAppToTakePictures ()
+		{
+			Intent intent = new Intent (MediaStore.ActionImageCapture);
+			IList<ResolveInfo> availableActivities = PackageManager.QueryIntentActivities (intent, PackageInfoFlags.MatchDefaultOnly);
+			return availableActivities != null && availableActivities.Count > 0;
+		}
 
 		protected override void OnCreate (Bundle bundle)
 		{
 			base.OnCreate (bundle);
 			SetContentView (Resource.Layout.Main);
-			_button = FindViewById<Button> (Resource.Id.myButton);
+			_newMomentButton = FindViewById<Button> (Resource.Id.myButton);
 			_imageView = FindViewById<ImageView> (Resource.Id.imageView1);
 
 
 			if (LastNonConfigurationInstance != null) {
-				_imageHelper = (ImageHelper)LastNonConfigurationInstance;
-				if (_imageHelper.ImageValid) {
-					displayInImageView ();
+				_nonConfiguration = (NonConfiguration)LastNonConfigurationInstance;
+				if (_moment != null) {
+					displayMoment ();
 				}
 
-			} else {
-				_imageHelper = new ImageHelper (this.ApplicationContext);
-				_imageHelper.CreateDirectoryForPictures ("xamarin_images");
-			}
+			} 
 				
-			if (_imageHelper.IsThereAnAppToTakePictures ()) {
-				_button.Click += TakeAPictureButtonClick;
+			if (IsThereAnAppToTakePictures ()) {
+				_newMomentButton.Click += NewMomentButtonClick;
 			} else {
-				_button.Text = "No camera!";
+				_newMomentButton.Text = "No camera!";
 			}
 
-			if (_imageHelper.Image == null) {
-				_imageHelper.loadImage (1);
-			} else if (_imageHelper.Image.Photo == null) {
-				_imageHelper.loadImage (1);
-				
-			}
-			if (_imageHelper.Image != null && _imageHelper.Image.Photo != null) {
-				displayInImageView ();
-			}
+
 		}
 
 		public override Java.Lang.Object OnRetainNonConfigurationInstance ()
 		{
 			base.OnRetainNonConfigurationInstance ();
-			return (Java.Lang.Object)_imageHelper;
+			return (Java.Lang.Object)_nonConfiguration;
 		}
 
-		private void TakeAPictureButtonClick (object sender, EventArgs eventArgs)
+		private void NewMomentButtonClick (object sender, EventArgs eventArgs)
 		{
-			_imageHelper.CreateRandomFilename ();
-			_imageHelper.createFile ();
+			_dir = new File (Environment.GetExternalStoragePublicDirectory (Environment.DirectoryPictures), "xamarin_temporary");
+			_file = new File (_dir, "temporary_photo");
+			if (!_dir.Exists ()) {
+				_dir.Mkdirs ();
+			}
 			Intent intent = new Intent (MediaStore.ActionImageCapture);
-			intent.PutExtra (MediaStore.ExtraOutput, Uri.FromFile (_imageHelper.File));
+			intent.PutExtra (MediaStore.ExtraOutput, Uri.FromFile (_file));
 			StartActivityForResult (intent, 0);
 		}
 
 		void displayInImageView ()
 		{
-			// display in ImageView. We will resize the bitmap to fit the display
-			// Loading the full sized image will consume to much memory 
-			// and cause the application to crash.
-			int height = (int)(Resources.DisplayMetrics.HeightPixels * 0.6);
-			int width = (int)(Resources.DisplayMetrics.WidthPixels * 0.8);
-			File file = _imageHelper.File;
-			if (height < width) {
-				int temp = height;
-				height = width;
-				width = temp;
-			}
-			//using (Bitmap bitmap = file.Path.LoadAndResizeBitmap (width, height)) {
-			_imageView.SetImageBitmap (_imageHelper.Image.Photo);
-			//}
+			_imageView.SetImageBitmap (_moment.Photo);
 		}
-
+			
 		protected override void OnActivityResult (int requestCode, Result resultCode, Intent data)
 		{
 			base.OnActivityResult (requestCode, resultCode, data);
 
 			if (resultCode == Result.Ok) {
-				_imageHelper.ImageValid = true;
-				bool success = _imageHelper.GenerateItem ();
-				if (success) {
-					_imageHelper.publishToGallery ();
-					ThreadPool.QueueUserWorkItem (o => _imageHelper.persistToSqlite ());
+			
+				_moment = new camera_android.Core.Moment ();
 
-					this.displayInImageView ();
+				try {
+					Bitmap bitmap = BitmapFactory.DecodeFile (_file.Path);
+					_moment.Photo = bitmap;
+					_moment.Latitude = "1.2";
+					_moment.Longitude = "1.3";
+					_moment.Note = "test";
+					_moment.Time = "343434";
+				} catch (Exception e) {
+
 				}
-			} else {
-				_imageHelper.deleteFile ();
-			}
+			} 
+		}
+
+		private void SavePhotoButtonClick (object sender, EventArgs eventArgs)
+		{
+			ThreadPool.QueueUserWorkItem (o => _image.persistToSqlite ());
 		}
 	}
 }

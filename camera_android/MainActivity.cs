@@ -64,6 +64,15 @@ namespace MomentsApp
 			}
 		}
 
+		protected override void OnDestroy() {
+			if (!_isChangingOrientation) {
+				if (_moment != null && _moment.Photo != null) {
+					_moment.Photo.Recycle ();
+				}
+			}
+			base.OnDestroy ();
+		}
+
 		protected override void OnCreate (Bundle bundle)
 		{
 			base.OnCreate (bundle);
@@ -93,8 +102,11 @@ namespace MomentsApp
 
 		}
 
+		bool _isChangingOrientation = false;
+
 		public override Java.Lang.Object OnRetainNonConfigurationInstance ()
 		{
+			_isChangingOrientation = true;
 			base.OnRetainNonConfigurationInstance ();
 			return (Java.Lang.Object)_nonConfiguration;
 		}

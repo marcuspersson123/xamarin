@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using MomentsApp.Core;
 
-
 namespace MomentsApp
 {
-
 	public static class MomentsManager
 	{
 		static MomentsManager ()
@@ -25,7 +23,7 @@ namespace MomentsApp
 
 		public static int SaveMoment (Moment moment)
 		{
-			return MomentsRepositoryADO.SaveMoment (moment,PhotoToByteArray(moment));
+			return MomentsRepositoryADO.SaveMoment (moment, PhotoToByteArray (moment));
 		}
 
 		public static int DeleteMoment (int id)
@@ -33,17 +31,22 @@ namespace MomentsApp
 			return MomentsRepositoryADO.DeleteMoment (id);
 		}
 
-		public static void GetPhoto(Moment moment) {
+		public static void GetPhoto (Moment moment)
+		{
 			byte[] photoBytes = MomentsRepositoryADO.GetPhotoByteArray (moment.ID);
-			moment.Photo = Android.Graphics.BitmapFactory.DecodeByteArray(photoBytes, 0, photoBytes.Length);
-			// photoBytes = null; out of memory-problemet. hade ingen effekt att sätt  till null 
+			moment.Photo = Android.Graphics.BitmapFactory.DecodeByteArray (photoBytes, 0, photoBytes.Length);
+			// photoBytes = null; out of memory-problemet. hade ingen effekt att sätta till null 
 		}
 
-		public static byte[] PhotoToByteArray(Moment moment) {
-			System.IO.MemoryStream stream = new System.IO.MemoryStream();
-			moment.Photo.Compress(Android.Graphics.Bitmap.CompressFormat.Png, 0, stream);
-			byte[] photoBytes = stream.ToArray();
-			//MomentsRepositoryADO.SavePhotoBytesArray (moment.ID, photoBytes);
+		public static byte[] PhotoToByteArray (Moment moment)
+		{
+			byte[] photoBytes = null;
+			using (System.IO.MemoryStream stream = new System.IO.MemoryStream ()) {
+				moment.Photo.Compress (Android.Graphics.Bitmap.CompressFormat.Png, 0, stream);
+				photoBytes = stream.ToArray ();
+			
+			
+			}
 			return photoBytes;
 		}
 	}

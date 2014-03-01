@@ -1,10 +1,7 @@
 ﻿using System;
 
-namespace camera_android.Core
+namespace MomentsApp.Core
 {
-	/// <summary>
-	/// Image business object
-	/// </summary>
 	public class Moment
 	{
 		public Moment ()

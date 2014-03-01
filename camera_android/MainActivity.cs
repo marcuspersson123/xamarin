@@ -13,10 +13,12 @@ using Android.Content.PM;
 using Java.IO;
 using Environment = Android.OS.Environment;
 using System.Threading;
+using MomentsApp.Core;
 
-namespace camera_android
+namespace MomentsApp
 {
-	public class NonConfiguration {
+	public class NonConfiguration : Java.Lang.Object
+	{
 	}
 
 	[Activity (Label = "camera_android", MainLauncher = true)]
@@ -27,7 +29,7 @@ namespace camera_android
 		Button _newMomentButton;
 		Java.IO.File _file;
 		Java.IO.File _dir;
-		camera_android.Core.Moment _moment;
+		MomentsApp.Core.Moment _moment;
 
 		public void publishToGallery ()
 		{
@@ -39,16 +41,27 @@ namespace camera_android
 
 		}
 
-		public void persistToSqlite ()
-		{
-			MomentManager.Save (_moment);
-		}
-
 		public bool IsThereAnAppToTakePictures ()
 		{
 			Intent intent = new Intent (MediaStore.ActionImageCapture);
 			IList<ResolveInfo> availableActivities = PackageManager.QueryIntentActivities (intent, PackageInfoFlags.MatchDefaultOnly);
 			return availableActivities != null && availableActivities.Count > 0;
+		}
+
+		void loadAndDisplayMoment ()
+		{
+			List<Moment> moments = (List<Moment>)MomentsManager.GetMoments ();
+			if (moments.Count > 0) {
+				_moment = moments [moments.Count - 1];
+				ThreadPool.QueueUserWorkItem (o => { 
+					MomentsManager.GetPhoto (_moment);
+
+					RunOnUiThread(() => {
+						displayMoment();
+					});
+				}
+				);
+			}
 		}
 
 		protected override void OnCreate (Bundle bundle)
@@ -61,12 +74,16 @@ namespace camera_android
 
 			if (LastNonConfigurationInstance != null) {
 				_nonConfiguration = (NonConfiguration)LastNonConfigurationInstance;
-				if (_moment != null) {
-					displayMoment ();
-				}
+
 
 			} 
 				
+			if (_moment != null) {
+				displayMoment ();
+			} else {
+				loadAndDisplayMoment ();
+			}
+
 			if (IsThereAnAppToTakePictures ()) {
 				_newMomentButton.Click += NewMomentButtonClick;
 			} else {
@@ -94,18 +111,18 @@ namespace camera_android
 			StartActivityForResult (intent, 0);
 		}
 
-		void displayInImageView ()
+		void displayMoment ()
 		{
 			_imageView.SetImageBitmap (_moment.Photo);
 		}
-			
+
 		protected override void OnActivityResult (int requestCode, Result resultCode, Intent data)
 		{
 			base.OnActivityResult (requestCode, resultCode, data);
 
 			if (resultCode == Result.Ok) {
 			
-				_moment = new camera_android.Core.Moment ();
+				_moment = new MomentsApp.Core.Moment ();
 
 				try {
 					Bitmap bitmap = BitmapFactory.DecodeFile (_file.Path);
@@ -114,6 +131,7 @@ namespace camera_android
 					_moment.Longitude = "1.3";
 					_moment.Note = "test";
 					_moment.Time = "343434";
+					MomentsManager.SaveMoment(_moment);
 				} catch (Exception e) {
 
 				}
@@ -122,7 +140,7 @@ namespace camera_android
 
 		private void SavePhotoButtonClick (object sender, EventArgs eventArgs)
 		{
-			ThreadPool.QueueUserWorkItem (o => _image.persistToSqlite ());
+			ThreadPool.QueueUserWorkItem (o => MomentsManager.SaveMoment (_moment));
 		}
 	}
 }

@@ -5,10 +5,30 @@ using Mono.Data.Sqlite;
 using System.IO;
 using System.Data;
 
-namespace camera_android.Core
+namespace MomentsApp.Core
 {
 	public class MomentDatabase
 	{
+		public byte[] LoadPhoto (int id)
+		{
+			byte[] photoBytes = null;
+			lock (_locker) {
+				_connection = new SqliteConnection ("Data Source=" + _sqlitePath);
+				_connection.Open ();
+				using (var command = _connection.CreateCommand ()) {
+					command.CommandText = "SELECT * from [Moments] WHERE [_id] = ?";
+					command.Parameters.Add (new SqliteParameter (DbType.Int32) { Value = id });
+					var reader = command.ExecuteReader ();
+					while (reader.Read ()) {
+						photoBytes = this.GetPhotoBytesFromReader (reader);
+						break;
+					}
+				}
+				_connection.Close ();
+			}
+			return photoBytes;
+		}
+
 		static object _locker = new object ();
 		public SqliteConnection _connection;
 		public string _sqlitePath;
@@ -37,23 +57,26 @@ namespace camera_android.Core
 			Console.WriteLine (output);
 		}
 
-		Moment GetMomentFromReader (SqliteDataReader reader, bool shallow)
+		Moment GetMomentFromReader (SqliteDataReader reader)
 		{
 			var moment = new Moment ();
 			moment.ID = Convert.ToInt32 (reader ["_id"]);
 			moment.Latitude = reader ["latitude"].ToString ();
 			moment.Longitude = reader ["longitude"].ToString ();
 			byte[] blob = (byte[]) reader ["image"] ;
-			if (!shallow) {
-				moment.Photo = GetPhoto (blob);
-			}
 			moment.Time = reader["time"].ToString();
 			moment.Note = reader ["note"].ToString ();
 
 			return moment;
 		}
 
-		public IEnumerable<Moment> GetMoments (bool shallow)
+		byte[] GetPhotoBytesFromReader (SqliteDataReader reader)
+		{
+			byte[] photoBytes = (byte[]) reader ["image"] ;
+			return photoBytes;
+		}
+
+		public IEnumerable<Moment> GetMoments ()
 		{
 			var moments = new List<Moment> ();
 
@@ -61,10 +84,12 @@ namespace camera_android.Core
 				_connection = new SqliteConnection ("Data Source=" + _sqlitePath);
 				_connection.Open ();
 				using (var contents = _connection.CreateCommand ()) {
-					contents.CommandText = "SELECT * from [Moments]";
+					//contents.CommandText = "SELECT * from [Moments]";
+					// [note], [longitude], [latitude], [time], [image], [_id]
+					contents.CommandText = "SELECT [note], [longitude], [latitude], [time], [image], [_id] from [Moments]";
 					var reader = contents.ExecuteReader ();
 					while (reader.Read ()) {
-						moments.Add (GetMomentFromReader (reader, shallow));
+						moments.Add (GetMomentFromReader (reader));
 					}
 				}
 				_connection.Close ();
@@ -79,11 +104,12 @@ namespace camera_android.Core
 				_connection = new SqliteConnection ("Data Source=" + _sqlitePath);
 				_connection.Open ();
 				using (var command = _connection.CreateCommand ()) {
-					command.CommandText = "SELECT * from [Moments] WHERE [_id] = ?";
+					// TODO: remove *
+					command.CommandText = "SELECT [note], [longitude], [latitude], [time], [image], [_id] from [Moments] WHERE [_id] = ?";
 					command.Parameters.Add (new SqliteParameter (DbType.Int32) { Value = id });
-					var r = command.ExecuteReader ();
-					while (r.Read ()) {
-						moment = GetMomentFromReader (r);
+					var reader = command.ExecuteReader ();
+					while (reader.Read ()) {
+						moment = GetMomentFromReader (reader);
 						break;
 					}
 				}
@@ -92,7 +118,7 @@ namespace camera_android.Core
 			return moment;
 		}
 
-		public int SaveMoment (Moment moment)
+		public int SaveMoment (Moment moment, byte[] photoBytes)
 		{
 			int rowsAffected;
 			lock (_locker) {
@@ -105,8 +131,7 @@ namespace camera_android.Core
 						command.Parameters.Add (new SqliteParameter (DbType.String) { Value = moment.Longitude });
 						command.Parameters.Add (new SqliteParameter (DbType.String) { Value = moment.Latitude });
 						command.Parameters.Add (new SqliteParameter (DbType.String) { Value = moment.Time });
-						byte[] photo = GetBytes (moment.Photo);
-						command.Parameters.Add (new SqliteParameter (DbType.Binary) { Value = photo });
+						command.Parameters.Add (new SqliteParameter (DbType.Binary) { Value = photoBytes });
 						command.Parameters.Add (new SqliteParameter (DbType.Int32) { Value = moment.ID });
 						rowsAffected = command.ExecuteNonQuery ();
 					}
@@ -117,13 +142,11 @@ namespace camera_android.Core
 					_connection.Open ();
 					using (var command = _connection.CreateCommand ()) {
 						command.CommandText = "INSERT INTO [Moments] ([note], [longitude], [latitude], [time], [image]) VALUES (? ,?, ?, ?, ?)";
-
 						command.Parameters.Add (new SqliteParameter (DbType.String) { Value = moment.Note });
 						command.Parameters.Add (new SqliteParameter (DbType.String) { Value = moment.Longitude });
 						command.Parameters.Add (new SqliteParameter (DbType.String) { Value = moment.Latitude });
 						command.Parameters.Add (new SqliteParameter (DbType.String) { Value = moment.Time });
-						byte[] photo = GetBytes (moment.Photo);
-						command.Parameters.Add (new SqliteParameter (DbType.Binary) { Value = photo });
+						command.Parameters.Add (new SqliteParameter (DbType.Binary) { Value = photoBytes });
 						rowsAffected = command.ExecuteNonQuery ();
 					}
 					_connection.Close ();

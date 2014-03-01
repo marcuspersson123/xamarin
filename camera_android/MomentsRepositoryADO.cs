@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace camera_android.Core
+namespace MomentsApp.Core
 {
 	public class MomentsRepositoryADO {
 		MomentDatabase db = null;
@@ -52,19 +52,19 @@ namespace camera_android.Core
 			}
 		}
 
-		public static Moment GetMoment(int id, bool shallow)
+		public static Moment GetMoment(int id)
 		{
-			return me.db.GetMoment(id, shallow);
+			return me.db.GetMoment(id);
 		}
 
-		public static IEnumerable<Moment> GetMoments (bool shallow)
+		public static IEnumerable<Moment> GetMoments ()
 		{
-			return me.db.GetMoments(shallow);
+			return me.db.GetMoments();
 		}
 
-		public static int SaveMoment (Moment moment)
+		public static int SaveMoment (Moment moment, byte[] photoBytes)
 		{
-			return me.db.SaveMoment(moment);
+			return me.db.SaveMoment(moment, photoBytes);
 		}
 
 		public static int DeleteMoment(int id)
@@ -72,16 +72,13 @@ namespace camera_android.Core
 			return me.db.DeleteMoment(id);
 		}
 
-		public static void GetPhoto(Moment moment) {
-			byte[] photoBytes = me.db.LoadPhoto (moment.ID);
-			moment.Photo = BitmapFactory.DecodeByteArray(photoBytes, 0, photoBytes.Length);
+		public static byte[] GetPhotoByteArray(int id) {
+			byte[] photoBytes = me.db.LoadPhoto (id);
+			return photoBytes;
+
 		}
 
-		public static byte[] GetBytes(Bitmap bitmap) {
-			System.IO.MemoryStream stream = new System.IO.MemoryStream();
-			bitmap.Compress(Android.Graphics.Bitmap.CompressFormat.Png, 0, stream);
-			return stream.ToArray();
-		}
+
 	}
 }
 

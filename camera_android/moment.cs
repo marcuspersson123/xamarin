@@ -18,7 +18,7 @@ namespace MomentsApp.Core
 
 		public string Time { get; set; }
 
-		public Android.Graphics.Bitmap Photo { get; set; }
+		//		public Android.Graphics.Bitmap Photo { get; set; }
 
 	}
 }

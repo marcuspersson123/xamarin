@@ -9,6 +9,8 @@ namespace MomentsApp.Core
 {
 	public class MomentDatabase
 	{
+
+
 		public byte[] LoadPhoto (int id)
 		{
 			byte[] photoBytes = null;
@@ -38,7 +40,25 @@ namespace MomentsApp.Core
 			var output = "";
 			_sqlitePath = dbPath;
 
+
+
+
+
+
+			//File.Delete (dbPath);
+
+
+
+
+
+
 			bool exists = File.Exists (dbPath);
+
+
+
+
+
+
 
 			if (!exists) {
 				_connection = new SqliteConnection ("Data Source=" + dbPath);

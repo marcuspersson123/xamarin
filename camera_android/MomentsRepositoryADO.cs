@@ -5,6 +5,8 @@ using System.IO;
 namespace MomentsApp.Core
 {
 	public class MomentsRepositoryADO {
+
+
 		MomentDatabase db = null;
 		protected static string dbLocation;		
 		protected static MomentsRepositoryADO me;		

@@ -6,6 +6,8 @@ namespace MomentsApp
 {
 	public static class MomentsManager
 	{
+	
+
 		static MomentsManager ()
 		{
 
@@ -21,9 +23,9 @@ namespace MomentsApp
 			return new List<Moment> (MomentsRepositoryADO.GetMoments ());
 		}
 
-		public static int SaveMoment (Moment moment)
+		public static int SaveMoment (Moment moment, byte[] photoBytes)
 		{
-			return MomentsRepositoryADO.SaveMoment (moment, PhotoToByteArray (moment));
+			return MomentsRepositoryADO.SaveMoment (moment, photoBytes);
 		}
 
 		public static int DeleteMoment (int id)
@@ -31,24 +33,14 @@ namespace MomentsApp
 			return MomentsRepositoryADO.DeleteMoment (id);
 		}
 
-		public static void GetPhoto (Moment moment)
+		public static byte[] GetPhotoBytes (Moment moment)
 		{
 			byte[] photoBytes = MomentsRepositoryADO.GetPhotoByteArray (moment.ID);
-			using (var bitmap = Android.Graphics.BitmapFactory.DecodeByteArray (photoBytes, 0, photoBytes.Length)) {
-				moment.Photo = bitmap;
-			}
-
-		}
-
-		public static byte[] PhotoToByteArray (Moment moment)
-		{
-			byte[] photoBytes = null;
-			using (System.IO.MemoryStream stream = new System.IO.MemoryStream ()) {
-				moment.Photo.Compress (Android.Graphics.Bitmap.CompressFormat.Png, 0, stream);
-				photoBytes = stream.ToArray ();
-			}
 			return photoBytes;
+
 		}
+
+
 	}
 }
 

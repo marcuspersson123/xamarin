@@ -15,15 +15,14 @@ using Environment = Android.OS.Environment;
 using System.Threading;
 using MomentsApp.Core;
 using Android.Content.Res;
-//using System.IO;
 
+//using System.IO;
 namespace MomentsApp
 {
 	public class NonConfiguration : Java.Lang.Object
 	{
 		Moment _moment;
 		public Bitmap _bitmap;
-
 		public byte[] _photoBytes;
 
 		public Moment Moment {
@@ -50,8 +49,6 @@ namespace MomentsApp
 		Java.IO.File _dir;
 		MomentsApp.Core.Moment _moment;
 
-
-
 		public void publishToGallery ()
 		{
 			// make it available in the gallery
@@ -69,17 +66,17 @@ namespace MomentsApp
 			return availableActivities != null && availableActivities.Count > 0;
 		}
 
-
-		void loadAndDisplayLastMoment ()
+		void loadAndDisplayMoment (int id)
 		{
-			List<Moment> moments = (List<Moment>)MomentsManager.GetMoments ();
-			if (moments.Count > 0) {
-				_moment = moments [moments.Count - 1];
+			//List<Moment> moments = (List<Moment>)MomentsManager.GetMoments ();
+			_moment = MomentsManager.GetMoment (id);
+			if (_moment != null) {
+				//_moment = moments [moments.Count - 1];
 				ThreadPool.QueueUserWorkItem (o => { 
-					_nonConfiguration._photoBytes = MomentsManager.GetPhotoBytes(_moment);
+					_nonConfiguration._photoBytes = MomentsManager.GetPhotoBytes (_moment);
 					RunOnUiThread (() => {
 						if (_nonConfiguration._bitmap != null) {
-							_nonConfiguration._bitmap.Recycle();
+							_nonConfiguration._bitmap.Recycle ();
 						}
 						_nonConfiguration._bitmap = Android.Graphics.BitmapFactory.DecodeByteArray (_nonConfiguration._photoBytes, 0, _nonConfiguration._photoBytes.Length);
 						displayMoment ();
@@ -92,12 +89,10 @@ namespace MomentsApp
 			}
 		}
 
-
-
 		protected override void OnDestroy ()
 		{
 			if (!_isChangingOrientation) {
-				if (_nonConfiguration._bitmap!=null) {
+				if (_nonConfiguration._bitmap != null) {
 					_nonConfiguration._bitmap.Recycle ();
 				}
 			}
@@ -106,7 +101,7 @@ namespace MomentsApp
 
 		void ShareButtonClick (object sender, EventArgs e)
 		{
-
+			//  http://components.xamarin.com/view/facebook-sdk
 		}
 
 		protected override void OnCreate (Bundle bundle)
@@ -144,11 +139,12 @@ namespace MomentsApp
 
 			_deleteButton.Visibility = ViewStates.Gone;
 			_shareButton.Click += ShareButtonClick;
+			_historyButton.Click += HistoryButtonClick;
 				
 			if (_moment != null) {
 				displayMoment ();
 			} else {
-				loadAndDisplayLastMoment ();
+				//loadAndDisplayLastMoment ();
 
 			}
 
@@ -186,6 +182,11 @@ namespace MomentsApp
 			StartActivityForResult (intent, 0);
 		}
 
+		private void HistoryButtonClick (object sender, EventArgs eventArgs)
+		{
+			StartActivityForResult  (typeof(MomentsActivity),1);
+		}
+
 		void displayMoment ()
 		{
 			_photoImageView.SetImageBitmap (_nonConfiguration._bitmap);
@@ -205,45 +206,55 @@ namespace MomentsApp
 		{
 			base.OnActivityResult (requestCode, resultCode, data);
 
-			if (resultCode == Result.Ok) {
+			switch (requestCode) {
+			case 0:  // from camera
+				if (resultCode == Result.Ok) {
 
-				_moment = new MomentsApp.Core.Moment ();
-				DateTime now = DateTime.Now;
-				//_moment.Time = now.ToString ("dddd d\\/M yyyy");
-				_moment.Time = now.ToString ("yyyy-MM-dd HH:mm:ss");
+					_moment = new MomentsApp.Core.Moment ();
+					DateTime now = DateTime.Now;
+					//_moment.Time = now.ToString ("dddd d\\/M yyyy");
+					_moment.Time = now.ToString ("yyyy-MM-dd HH:mm:ss");
 
-				// från stackoverflow
-				//Bitmap bmp = (Bitmap) data.getExtras().get("data");
-				//img.setImageBitmap(bmp);
+					// från stackoverflow
+					//Bitmap bmp = (Bitmap) data.getExtras().get("data");
+					//img.setImageBitmap(bmp);
 
-				if (_nonConfiguration._bitmap != null) {
-					_nonConfiguration._bitmap.Recycle();
-				}
+					if (_nonConfiguration._bitmap != null) {
+						_nonConfiguration._bitmap.Recycle ();
+					}
 
-				//_photoBytes = _file.ToArray<byte[]> ();
-				_nonConfiguration._bitmap = BitmapFromFile (_file, 400, 400);
-				using (System.IO.MemoryStream stream = new System.IO.MemoryStream ()) {
-					_nonConfiguration._bitmap.Compress (Bitmap.CompressFormat.Png, 0, stream);
-					_nonConfiguration._photoBytes = stream.ToArray ();
-				}
+					//_photoBytes = _file.ToArray<byte[]> ();
+					_nonConfiguration._bitmap = BitmapFromFile (_file, 400, 400);
+					using (System.IO.MemoryStream stream = new System.IO.MemoryStream ()) {
+						_nonConfiguration._bitmap.Compress (Bitmap.CompressFormat.Png, 0, stream);
+						_nonConfiguration._photoBytes = stream.ToArray ();
+					}
 
-				//_photoBytes = _bitmap.ToArray<byte> ();
+					//_photoBytes = _bitmap.ToArray<byte> ();
 
-				_moment.Latitude = "1.2";
-				_moment.Longitude = "1.3";
-				//_moment.Note = "detta är ett test";
-				//_moment.Time = "343434";
+					_moment.Latitude = "1.2";
+					_moment.Longitude = "1.3";
+					//_moment.Note = "detta är ett test";
+					//_moment.Time = "343434";
 
-				_saveButton.Visibility = ViewStates.Visible;
-				displayMoment ();
-
-
-			} else {
-				if (_moment == null) {
-					_saveButton.Visibility = ViewStates.Gone;
-				} else {
 					_saveButton.Visibility = ViewStates.Visible;
+					displayMoment ();
+
+
+				} else {
+					if (_moment == null) {
+						_saveButton.Visibility = ViewStates.Gone;
+					} else {
+						_saveButton.Visibility = ViewStates.Visible;
+					}
 				}
+				break;
+			case 1: // from moments listview
+				if (resultCode == Result.Ok) {
+					int id = (int)data.GetLongExtra ("ID", -1);
+					loadAndDisplayMoment (id);
+				}
+				break;
 			}
 		}
 

@@ -1,15 +1,20 @@
 ﻿<Properties GitUserInfo="UsingGIT">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="camera_android/Resources/Resource.designer.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="camera_android/MainActivity.cs">
     <Files>
       <File FileName="camera_android/Properties/AndroidManifest.xml" Line="1" Column="1" />
       <File FileName="camera_android/Properties/AssemblyInfo.cs" Line="1" Column="1" />
-      <File FileName="camera_android/Resources/Resource.designer.cs" Line="1" Column="1" />
+      <File FileName="camera_android/MainActivity.cs" Line="109" Column="6" />
+      <File FileName="camera_android/MomentDatabase.cs" Line="1" Column="1" />
+      <File FileName="../../../../../Library/Frameworks/Mono.framework/External/xbuild/Xamarin/Android/Xamarin.Android.Common.targets" Line="1" Column="1" />
+      <File FileName="camera_android/MomentsManager.cs" Line="1" Column="1" />
+      <File FileName="camera_android/moment.cs" Line="1" Column="1" />
+      <File FileName="camera_android/MomentsRepositoryADO.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.ItemProperties.camera__android AndroidDeviceId-Debug="SH264TV00968" />
+  <MonoDevelop.Ide.ItemProperties.camera__android AndroidDeviceId-Debug="SH264TV00968" MonoForAntroid.PreferredDevice="3.7in WVGA (Nexus One)" />
 </Properties>

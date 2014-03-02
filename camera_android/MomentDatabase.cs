@@ -45,7 +45,7 @@ namespace MomentsApp.Core
 
 
 
-			//File.Delete (dbPath);
+			//	File.Delete (dbPath);
 
 
 

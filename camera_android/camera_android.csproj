@@ -55,6 +55,8 @@
     <Compile Include="MomentDatabase.cs" />
     <Compile Include="MomentsManager.cs" />
     <Compile Include="MomentsRepositoryADO.cs" />
+    <Compile Include="MomentsActivity.cs" />
+    <Compile Include="MomentsArrayAdapter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

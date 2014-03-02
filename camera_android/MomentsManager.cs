@@ -34,8 +34,10 @@ namespace MomentsApp
 		public static void GetPhoto (Moment moment)
 		{
 			byte[] photoBytes = MomentsRepositoryADO.GetPhotoByteArray (moment.ID);
-			moment.Photo = Android.Graphics.BitmapFactory.DecodeByteArray (photoBytes, 0, photoBytes.Length);
-			// photoBytes = null; out of memory-problemet. hade ingen effekt att sätta till null 
+			using (var bitmap = Android.Graphics.BitmapFactory.DecodeByteArray (photoBytes, 0, photoBytes.Length)) {
+				moment.Photo = bitmap;
+			}
+
 		}
 
 		public static byte[] PhotoToByteArray (Moment moment)
@@ -44,8 +46,6 @@ namespace MomentsApp
 			using (System.IO.MemoryStream stream = new System.IO.MemoryStream ()) {
 				moment.Photo.Compress (Android.Graphics.Bitmap.CompressFormat.Png, 0, stream);
 				photoBytes = stream.ToArray ();
-			
-			
 			}
 			return photoBytes;
 		}

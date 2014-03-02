@@ -1,84 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="#fffffef4">
-    <ImageView
-        android:src="@android:drawable/ic_menu_gallery"
-        android:layout_width="200.0dp"
-        android:layout_height="110.0dp"
-        android:id="@+id/photoImageView"
-        android:adjustViewBounds="true"
-        android:layout_marginBottom="5.0dp"
-        android:layout_marginRight="20.0dp"
-        android:layout_marginTop="5.0dp"
-        android:layout_marginLeft="20.0dp"
-        android:layout_gravity="center_horizontal" />
-    <ImageView
-        android:src="@android:drawable/ic_menu_gallery"
-        android:layout_width="200.0dp"
-        android:layout_height="110.0dp"
-        android:id="@+id/mapImageView"
-        android:adjustViewBounds="true"
-        android:layout_marginBottom="5.0dp"
-        android:layout_marginRight="20.0dp"
-        android:layout_marginTop="0.0dp"
-        android:layout_marginLeft="20.0dp"
-        android:layout_gravity="center_horizontal" />
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="25px"
+    android:minHeight="25px"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/scrollView1">
     <LinearLayout
-        android:orientation="horizontal"
-        android:minWidth="25px"
-        android:minHeight="25px"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/linearLayout1"
-        android:layout_weight="1">
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#fffffef4">
         <TextView
-            android:text="Note:"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/textView1"
-            android:textColor="#ff090000" />
-        <EditText
-            android:inputType="textMultiLine"
-            android:id="@+id/noteEditText"
-            android:layout_weight="1"
-            android:layout_width="1em"
-            android:layout_height="match_parent"
-            android:gravity="top" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/timeTextView"
+            android:gravity="center_horizontal"
+            android:text="Måndagen den 20/4 2014"
+            android:textColor="#ff000000"
+            android:typeface="normal" />
+        <ImageView
+            android:src="@android:drawable/ic_menu_gallery"
+            android:layout_width="200.0dp"
+            android:layout_height="110.0dp"
+            android:id="@+id/photoImageView"
+            android:adjustViewBounds="true"
+            android:layout_marginBottom="5.0dp"
+            android:layout_marginRight="20.0dp"
+            android:layout_marginTop="5.0dp"
+            android:layout_marginLeft="20.0dp"
+            android:layout_gravity="center_horizontal" />
+        <ImageView
+            android:src="@android:drawable/ic_menu_gallery"
+            android:layout_width="200.0dp"
+            android:layout_height="110.0dp"
+            android:id="@+id/mapImageView"
+            android:adjustViewBounds="true"
+            android:layout_marginBottom="5.0dp"
+            android:layout_marginRight="20.0dp"
+            android:layout_marginTop="0.0dp"
+            android:layout_marginLeft="20.0dp"
+            android:layout_gravity="center_horizontal" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:minWidth="25px"
+            android:minHeight="25px"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/linearLayout1"
+            android:layout_weight="1">
+            <TextView
+                android:text="Note:"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/textView1"
+                android:textColor="#ff090000"
+                android:gravity="center_vertical" />
+            <EditText
+                android:inputType="textMultiLine"
+                android:id="@+id/noteEditText"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="top"
+                android:textColor="#ff63648e"
+                android:text="test" />
+        </LinearLayout>
+        <RelativeLayout
+            android:minWidth="25px"
+            android:minHeight="25px"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:id="@+id/relativeLayout1">
+            <Button
+                android:text="Save"
+                android:id="@+id/saveButton"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textColor="#ff63648e" />
+            <Button
+                android:text="Delete"
+                android:id="@+id/deleteButton"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textColor="#ff63648e" />
+            <Button
+                android:text="Share"
+                android:id="@+id/shareButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:textColor="#ff63648e" />
+            <Button
+                android:text="History..."
+                android:id="@+id/historyButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:textColor="#ff63648e" />
+            <Button
+                android:text="New"
+                android:id="@+id/newButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentBottom="true"
+                android:textColor="#ff63648e" />
+        </RelativeLayout>
     </LinearLayout>
-    <RelativeLayout
-        android:minWidth="25px"
-        android:minHeight="25px"
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:id="@+id/relativeLayout1">
-        <Button
-            android:text="Save"
-            android:id="@+id/saveButton"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content" />
-        <Button
-            android:text="Share"
-            android:id="@+id/shareButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true" />
-        <Button
-            android:text="History..."
-            android:id="@+id/historyButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true" />
-        <Button
-            android:text="New"
-            android:id="@+id/newButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentBottom="true" />
-    </RelativeLayout>
-</LinearLayout>
+</ScrollView>

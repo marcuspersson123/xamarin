@@ -20,14 +20,27 @@ namespace MomentsApp
 {
 	public class NonConfiguration : Java.Lang.Object
 	{
+		Moment _moment;
+		public Moment Moment {
+
+			get { return _moment; }
+			set { _moment = value; }
+		}
 	}
 
 	[Activity (Label = "camera_android", MainLauncher = true)]
 	public class MainActivity : Activity
 	{
 		NonConfiguration _nonConfiguration;
-		ImageView _imageView;
-		Button _newMomentButton;
+		ImageView _photoImageView;
+		ImageView _mapImageView;
+		EditText _noteEditText;
+		Button _shareButton;
+		Button _newButton;
+		Button _saveButton;
+		Button _deleteButton;
+		Button _historyButton;
+		TextView _timeTextView;
 		Java.IO.File _file;
 		Java.IO.File _dir;
 		MomentsApp.Core.Moment _moment;
@@ -49,7 +62,7 @@ namespace MomentsApp
 			return availableActivities != null && availableActivities.Count > 0;
 		}
 
-		void loadAndDisplayMoment ()
+		void loadAndDisplayLastMoment ()
 		{
 			List<Moment> moments = (List<Moment>)MomentsManager.GetMoments ();
 			if (moments.Count > 0) {
@@ -59,9 +72,12 @@ namespace MomentsApp
 
 					RunOnUiThread (() => {
 						displayMoment ();
+						_saveButton.Visibility = ViewStates.Visible;
 					});
 				}
 				);
+			} else {
+				_saveButton.Visibility = ViewStates.Gone;
 			}
 		}
 
@@ -79,27 +95,40 @@ namespace MomentsApp
 		{
 			base.OnCreate (bundle);
 			SetContentView (Resource.Layout.Main);
-			_newMomentButton = FindViewById<Button> (Resource.Id.myButton);
-			_imageView = FindViewById<ImageView> (Resource.Id.imageView1);
+
+			_photoImageView = FindViewById<ImageView> (Resource.Id.photoImageView);
+			_mapImageView = FindViewById<ImageView> (Resource.Id.mapImageView);
+			_noteEditText = FindViewById<EditText> (Resource.Id.noteEditText);
+			_saveButton = FindViewById<Button> (Resource.Id.saveButton);
+			_deleteButton = FindViewById<Button> (Resource.Id.deleteButton);
+			_shareButton = FindViewById<Button> (Resource.Id.shareButton);
+			_newButton = FindViewById<Button> (Resource.Id.newButton);
+			_timeTextView = FindViewById<TextView> (Resource.Id.timeTextView);
+			_historyButton = FindViewById<Button> (Resource.Id.historyButton);
 
 
 			if (LastNonConfigurationInstance != null) {
 				_nonConfiguration = (NonConfiguration)LastNonConfigurationInstance;
-
+				_moment = _nonConfiguration.Moment;
 
 			} 
+
+			_deleteButton.Visibility = ViewStates.Gone;
 				
 			if (_moment != null) {
 				displayMoment ();
 			} else {
-				loadAndDisplayMoment ();
+				loadAndDisplayLastMoment ();
+
 			}
 
 			if (IsThereAnAppToTakePictures ()) {
-				_newMomentButton.Click += NewMomentButtonClick;
+				_newButton.Click += NewButtonClick;
 			} else {
-				_newMomentButton.Text = "No camera!";
+				_newButton.Text = "No camera!";
 			}
+
+			_saveButton.Click += SaveButtonClick;
 
 
 		}
@@ -110,10 +139,12 @@ namespace MomentsApp
 		{
 			_isChangingOrientation = true;
 			base.OnRetainNonConfigurationInstance ();
+			_nonConfiguration = new NonConfiguration ();
+			_nonConfiguration.Moment = _moment;
 			return (Java.Lang.Object)_nonConfiguration;
 		}
 
-		private void NewMomentButtonClick (object sender, EventArgs eventArgs)
+		private void NewButtonClick (object sender, EventArgs eventArgs)
 		{
 			_dir = new File (Environment.GetExternalStoragePublicDirectory (Environment.DirectoryPictures), "xamarin_temporary");
 			_file = new File (_dir, "temporary_photo");
@@ -127,7 +158,17 @@ namespace MomentsApp
 
 		void displayMoment ()
 		{
-			_imageView.SetImageBitmap (_moment.Photo);
+			_photoImageView.SetImageBitmap (_moment.Photo);
+			_noteEditText.Text = _moment.Note;
+			DateTime momentTime;
+			bool isDateTime = DateTime.TryParse (_moment.Time, out momentTime);
+			string formattedDateTime;
+			if (isDateTime) {
+				formattedDateTime = momentTime.ToString ("dddd d\\/M yyyy HH:mm");
+			} else {
+				formattedDateTime = "Not a DateTime";
+			}
+			_timeTextView.Text = formattedDateTime;
 		}
 
 		protected override void OnActivityResult (int requestCode, Result resultCode, Intent data)
@@ -135,42 +176,61 @@ namespace MomentsApp
 			base.OnActivityResult (requestCode, resultCode, data);
 
 			if (resultCode == Result.Ok) {
-			
-				_moment = new MomentsApp.Core.Moment ();
-
-				try {
-					//Bitmap bitmap = BitmapFactory.DecodeFile (_file.Path);
-					Bitmap bitmap = BitmapFromFile (_file, 100, 100);
-
-					_moment.Photo = bitmap;
-					_moment.Latitude = "1.2";
-					_moment.Longitude = "1.3";
-					_moment.Note = "test";
-					_moment.Time = "343434";
-					MomentsManager.SaveMoment (_moment);
-				} catch (Exception e) {
-
+				if (_moment != null) {
+					if (_moment.Photo != null) {
+						_moment.Photo.Recycle ();
+						Java.Lang.JavaSystem.Gc ();
+					}
 				}
-			} 
+				_moment = new MomentsApp.Core.Moment ();
+				DateTime now = DateTime.Now;
+				//_moment.Time = now.ToString ("dddd d\\/M yyyy");
+				_moment.Time = now.ToString ("yyyy-MM-dd HH:mm:ss");
+
+
+				// gör att _moment.Photo får intrptr fel
+				//using (var bitmap = BitmapFromFile (_file, 400, 400)) {
+				//		_moment.Photo = bitmap;
+				//}
+
+				var bitmap = BitmapFromFile (_file, 400, 400);
+				_moment.Photo = bitmap;
+
+
+				_moment.Latitude = "1.2";
+				_moment.Longitude = "1.3";
+				//_moment.Note = "detta är ett test";
+				//_moment.Time = "343434";
+
+				_saveButton.Visibility = ViewStates.Visible;
+				displayMoment ();
+
+
+			} else {
+				if (_moment == null) {
+					_saveButton.Visibility = ViewStates.Gone;
+				} else {
+					_saveButton.Visibility = ViewStates.Visible;
+				}
+			}
 		}
 
-		private void SavePhotoButtonClick (object sender, EventArgs eventArgs)
+		private void SaveButtonClick (object sender, EventArgs eventArgs)
 		{
+			_moment.Note = _noteEditText.Text;
+
 			ThreadPool.QueueUserWorkItem (o => MomentsManager.SaveMoment (_moment));
 		}
 
 		public static Bitmap BitmapFromFile (File file, int reqWidth, int reqHeight)
 		{
-
-			// First decode with inJustDecodeBounds=true to check dimensions
+		
 			BitmapFactory.Options options = new BitmapFactory.Options ();
 			options.InJustDecodeBounds = true;
-			BitmapFactory.DecodeFile (file.Path, options);
+			using (var dispose = BitmapFactory.DecodeFile (file.Path, options)) {
 
-			// Calculate inSampleSize
+			}
 			options.InSampleSize = CalculateInSampleSize (options, reqWidth, reqHeight);
-
-			// Decode bitmap with inSampleSize set
 			options.InJustDecodeBounds = false;
 			return BitmapFactory.DecodeFile (file.Path, options);
 		}

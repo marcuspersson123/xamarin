@@ -123,7 +123,7 @@ namespace MomentsApp
 			};
 
 			var parameters = new Dictionary<string, object> ();
-			parameters ["message"] = "my first photo upload using Facebook SDK for .NET";
+			parameters ["message"] = "-- "+_nonConfiguration._moment.Time+" --"+ _nonConfiguration._moment.Note;
 			parameters ["file"] = new FacebookMediaObject {
 				ContentType = "image/jpeg",
 				FileName = "image.jpeg"

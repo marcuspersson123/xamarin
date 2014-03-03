@@ -60,7 +60,6 @@
     <Compile Include="MomentsRepositoryADO.cs" />
     <Compile Include="MomentsActivity.cs" />
     <Compile Include="MomentsArrayAdapter.cs" />
-    <Compile Include="Test.cs" />
     <Compile Include="FBWebViewAuthActivity.cs" />
   </ItemGroup>
   <ItemGroup>

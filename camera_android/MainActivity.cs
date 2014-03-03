@@ -31,7 +31,7 @@ namespace MomentsApp
 		public string _profileName;
 	}
 
-	[Activity (Label = "camera_android", MainLauncher = true)]
+	[Activity (Label = "Moments App", MainLauncher = true)]
 	public class MainActivity : Activity
 	{
 		NonConfiguration _nonConfiguration;
@@ -308,41 +308,42 @@ namespace MomentsApp
 					loadAndDisplayMoment (id);
 				}
 				break;
-						case 2:  // from facebook login
-				_nonConfiguration._accessToken = data.GetStringExtra ("AccessToken");
-				string userId = data.GetStringExtra ("UserId");
-				string error = data.GetStringExtra ("Exception");
+			case 2:  // from facebook login
+				if (data != null) {
+					_nonConfiguration._accessToken = data.GetStringExtra ("AccessToken");
+					string userId = data.GetStringExtra ("UserId");
+					string error = data.GetStringExtra ("Exception");
 
-				_nonConfiguration._fb = new FacebookClient (_nonConfiguration._accessToken);
+					_nonConfiguration._fb = new FacebookClient (_nonConfiguration._accessToken);
 
-				//ImageView imgUser = FindViewById<ImageView> (Resource.Id.imgUser);
-				//serName = FindViewById<TextView> (Resource.Id.txtvUserName);
+					//ImageView imgUser = FindViewById<ImageView> (Resource.Id.imgUser);
+					//serName = FindViewById<TextView> (Resource.Id.txtvUserName);
 
-				_nonConfiguration._fb.GetTaskAsync ("me").ContinueWith (t => {
-					if (!t.IsFaulted) {
+					_nonConfiguration._fb.GetTaskAsync ("me").ContinueWith (t => {
+						if (!t.IsFaulted) {
 
-						var result = (IDictionary<string, object>)t.Result;
+							var result = (IDictionary<string, object>)t.Result;
 
-						// available picture types: square (50x50), small (50xvariable height), large (about 200x variable height) (all size in pixels)
-						// for more info visit http://developers.facebook.com/docs/reference/api
-						string profilePictureUrl = string.Format ("https://graph.facebook.com/{0}/picture?type={1}&access_token={2}", userId, "square", _nonConfiguration._accessToken);
-						//var bm = BitmapFactory.DecodeStream (new Java.Net.URL (profilePictureUrl).OpenStream ());
-						_nonConfiguration._profileName = (string)result ["name"];
+							// available picture types: square (50x50), small (50xvariable height), large (about 200x variable height) (all size in pixels)
+							// for more info visit http://developers.facebook.com/docs/reference/api
+							string profilePictureUrl = string.Format ("https://graph.facebook.com/{0}/picture?type={1}&access_token={2}", userId, "square", _nonConfiguration._accessToken);
+							//var bm = BitmapFactory.DecodeStream (new Java.Net.URL (profilePictureUrl).OpenStream ());
+							_nonConfiguration._profileName = "FB profile: " + (string)result ["name"];
+							_nonConfiguration._isLoggedIn = true;
+							RunOnUiThread (() => {
+								UpdateUI ();
+							});
 
-						RunOnUiThread (() => {
-							UpdateUI();
-						});
 
-						_nonConfiguration._isLoggedIn = true;
-					} else {
-						_nonConfiguration._isLoggedIn = false;
-						RunOnUiThread (() => {
-						Alert ("Failed to Log In", "Reason: " + error, false, (res) => {
-						});
-						});
-					}
-				});
-
+						} else {
+							_nonConfiguration._isLoggedIn = false;
+							RunOnUiThread (() => {
+								Alert ("Failed to Log In", "Reason: " + error, false, (res) => {
+								});
+							});
+						}
+					});
+				}
 				break;
 			}
 		}

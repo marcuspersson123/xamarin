@@ -11,7 +11,7 @@ using Android.Widget;
 
 namespace MomentsApp
 {
-	[Activity (Label = "MomentsActivity")]			
+	[Activity (Label = "Moments App")]			
 	public class MomentsActivity : ListActivity
 	{
 

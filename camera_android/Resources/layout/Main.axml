@@ -18,6 +18,13 @@
             android:text="Måndagen den 20/4 2014"
             android:textColor="#ff000000"
             android:typeface="normal" />
+        <TextView
+            android:text="User: marcuspersson"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/userTextView"
+            android:gravity="center_horizontal" />
         <ImageView
             android:src="@android:drawable/ic_menu_gallery"
             android:layout_width="200.0dp"
@@ -70,10 +77,10 @@
             android:minWidth="25px"
             android:minHeight="25px"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="90dp"
             android:id="@+id/relativeLayout1">
             <Button
-                android:text="Save"
+                android:text="Save locally"
                 android:id="@+id/saveButton"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
@@ -85,7 +92,7 @@
                 android:layout_width="wrap_content"
                 android:textColor="#ff63648e" />
             <Button
-                android:text="Share"
+                android:text="Share to FB"
                 android:id="@+id/shareButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -100,13 +107,19 @@
                 android:layout_alignParentBottom="true"
                 android:textColor="#ff63648e" />
             <Button
-                android:text="New"
+                android:text="New moment"
                 android:id="@+id/newButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentBottom="true"
                 android:textColor="#ff63648e" />
+            <Button
+                android:text="Login to FB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/loginButton"
+                android:layout_centerInParent="true" />
         </RelativeLayout>
     </LinearLayout>
 </ScrollView>

@@ -1,15 +1,14 @@
 ﻿<Properties GitUserInfo="UsingGIT">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="camera_android/MainActivity.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="camera_android/Test.cs">
     <Files>
-      <File FileName="camera_android/Properties/AndroidManifest.xml" Line="1" Column="1" />
-      <File FileName="camera_android/Properties/AssemblyInfo.cs" Line="1" Column="1" />
-      <File FileName="camera_android/MainActivity.cs" Line="109" Column="6" />
-      <File FileName="camera_android/MomentDatabase.cs" Line="1" Column="1" />
-      <File FileName="../../../../../Library/Frameworks/Mono.framework/External/xbuild/Xamarin/Android/Xamarin.Android.Common.targets" Line="1" Column="1" />
+      <File FileName="camera_android/MainActivity.cs" Line="114" Column="54" />
+      <File FileName="camera_android/MomentsActivity.cs" Line="1" Column="1" />
+      <File FileName="camera_android/MomentsArrayAdapter.cs" Line="1" Column="1" />
       <File FileName="camera_android/MomentsManager.cs" Line="1" Column="1" />
-      <File FileName="camera_android/moment.cs" Line="1" Column="1" />
       <File FileName="camera_android/MomentsRepositoryADO.cs" Line="1" Column="1" />
+      <File FileName="camera_android/MomentDatabase.cs" Line="1" Column="1" />
+      <File FileName="camera_android/Test.cs" Line="29" Column="89" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -73,7 +73,6 @@
     <Compile Include="MomentsActivity.cs" />
     <Compile Include="MomentsArrayAdapter.cs" />
     <Compile Include="FBWebViewAuthActivity.cs" />
-    <Compile Include="MapViewDemo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

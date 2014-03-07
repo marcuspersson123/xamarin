@@ -42,12 +42,15 @@ namespace MomentsApp
 		NonConfiguration _nonConfiguration;
 		ImageView _photoImageView;
 		EditText _noteEditText;
-		Button _shareButton;
-		Button _newButton;
-		Button _saveButton;
-		Button _deleteButton;
-		Button _historyButton;
-		Button _currentLocationButton;
+		ImageButton _shareImageButton;
+		ImageButton _newImageButton;
+		ImageButton _saveImageButton;
+		ImageButton _deleteImageButton;
+		ImageButton _historyImageButton;
+		ImageButton _currentLocationImageButton;
+		TextView _userTextView;
+		Button _loginImageButton;
+
 		TextView _timeTextView;
 		Java.IO.File _file;
 		Java.IO.File _dir;
@@ -90,12 +93,12 @@ namespace MomentsApp
 						}
 						_nonConfiguration._bitmap = Android.Graphics.BitmapFactory.DecodeByteArray (_nonConfiguration._photoBytes, 0, _nonConfiguration._photoBytes.Length);
 						UpdateUI ();
-						_saveButton.Visibility = ViewStates.Visible;
+						_saveImageButton.Visibility = ViewStates.Visible;
 					});
 				}
 				);
 			} else {
-				_saveButton.Visibility = ViewStates.Gone;
+				_saveImageButton.Visibility = ViewStates.Gone;
 			}
 		}
 
@@ -142,10 +145,7 @@ namespace MomentsApp
 			Toast.MakeText(this, "Sending moment...", ToastLength.Long).Show();
 			_nonConfiguration._fb.PostTaskAsync ("me/photos", parameters);
 		}
-
-		TextView _userTextView;
-		Button _loginButton;
-
+			
 		protected override void OnCreate (Bundle bundle)
 		{
 			base.OnCreate (bundle);
@@ -153,15 +153,15 @@ namespace MomentsApp
 
 			_photoImageView = FindViewById<ImageView> (Resource.Id.photoImageView);
 			_noteEditText = FindViewById<EditText> (Resource.Id.noteEditText);
-			_saveButton = FindViewById<Button> (Resource.Id.saveButton);
-			_deleteButton = FindViewById<Button> (Resource.Id.deleteButton);
-			_shareButton = FindViewById<Button> (Resource.Id.shareButton);
-			_newButton = FindViewById<Button> (Resource.Id.newButton);
+			_saveImageButton = FindViewById<ImageButton> (Resource.Id.saveButton);
+			_deleteImageButton = FindViewById<ImageButton> (Resource.Id.deleteButton);
+			_shareImageButton = FindViewById<ImageButton> (Resource.Id.shareButton);
+			_newImageButton = FindViewById<ImageButton> (Resource.Id.newButton);
 			_timeTextView = FindViewById<TextView> (Resource.Id.timeTextView);
-			_historyButton = FindViewById<Button> (Resource.Id.historyButton);
+			_historyImageButton = FindViewById<ImageButton> (Resource.Id.historyButton);
 			_userTextView = FindViewById<TextView> (Resource.Id.userTextView);
-			_loginButton = FindViewById<Button> (Resource.Id.loginButton);
-			_currentLocationButton = FindViewById<Button> (Resource.Id.currentLocationButton);
+			_loginImageButton = FindViewById<Button> (Resource.Id.loginButton);
+			_currentLocationImageButton = FindViewById<ImageButton> (Resource.Id.currentLocationButton);
 
 			if (LastNonConfigurationInstance != null) {
 				_nonConfiguration = (NonConfiguration)LastNonConfigurationInstance;
@@ -171,12 +171,12 @@ namespace MomentsApp
 
 			//_deleteButton.Visibility = ViewStates.Gone;
 
-			_deleteButton.Click += DeleteButtonClick;
-			_shareButton.Click += ShareButtonClick;
-			_historyButton.Click += HistoryButtonClick;
-			_loginButton.Click += LoginButtonClick;
-			_saveButton.Click += SaveButtonClick;
-			_currentLocationButton.Click += CurrentLocationButtonClick;
+			_deleteImageButton.Click += DeleteButtonClick;
+			_shareImageButton.Click += ShareButtonClick;
+			_historyImageButton.Click += HistoryButtonClick;
+			_loginImageButton.Click += LoginButtonClick;
+			_saveImageButton.Click += SaveButtonClick;
+			_currentLocationImageButton.Click += CurrentLocationButtonClick;
 
 			_dir = new File (Environment.GetExternalStoragePublicDirectory (Environment.DirectoryPictures), "xamarin_temporary");
 			_file = new File (_dir, "temporary_photo");
@@ -186,9 +186,10 @@ namespace MomentsApp
 
 
 			if (IsThereAnAppToTakePictures ()) {
-				_newButton.Click += NewButtonClick;
+				_newImageButton.Click += NewButtonClick;
 			} else {
-				_newButton.Text = "No camera!";
+				_newImageButton.Enabled = false;
+				Toast.MakeText(this, "No camera!", ToastLength.Long).Show();
 			}
 
 
@@ -267,18 +268,18 @@ namespace MomentsApp
 		void UpdateUI ()
 		{
 			if (_nonConfiguration._moment != null) {
-				_photoImageView.Visibility = ViewStates.Visible;
-				_saveButton.Visibility = ViewStates.Visible;
+				//_photoImageView.Visibility = ViewStates.Visible;
+				_saveImageButton.Visibility = ViewStates.Visible;
 
 				if (_nonConfiguration._moment.ID >= 0) {
-					_deleteButton.Visibility = ViewStates.Visible;
+					_deleteImageButton.Visibility = ViewStates.Visible;
 				} else {
-					_deleteButton.Visibility = ViewStates.Invisible;
+					_deleteImageButton.Visibility = ViewStates.Gone;
 				}
 				if (_nonConfiguration._isLoggedIn) {
-					_shareButton.Visibility = ViewStates.Visible;
+					_shareImageButton.Visibility = ViewStates.Visible;
 				} else {
-					_shareButton.Visibility = ViewStates.Invisible;
+					_shareImageButton.Visibility = ViewStates.Gone;
 				}
 
 					_photoImageView.SetImageBitmap (_nonConfiguration._bitmap);
@@ -293,29 +294,30 @@ namespace MomentsApp
 					formattedDateTime = "Not a DateTime";
 				}
 				_timeTextView.Text = formattedDateTime;
-				_noteEditText.Visibility = ViewStates.Visible;
+				_noteEditText.Enabled = true;
 			} else {
 				_userTextView.Text = "";
 				_timeTextView.Text = "";
-				_noteEditText.Visibility = ViewStates.Invisible;
-				//			_mapImageView.Visibility = ViewStates.Invisible;
-				_photoImageView.Visibility = ViewStates.Invisible;
-				_saveButton.Visibility = ViewStates.Invisible;
-				_shareButton.Visibility = ViewStates.Invisible;
-				_deleteButton.Visibility = ViewStates.Invisible;
+				_noteEditText.Text = "";
+				_noteEditText.Enabled = false;
+				//			_mapImageView.Visibility = ViewStates.Gone;
+				_photoImageView.SetBackgroundResource(Android.Resource.Drawable.IcMenuGallery);
+				_saveImageButton.Visibility = ViewStates.Gone;
+				_shareImageButton.Visibility = ViewStates.Gone;
+				_deleteImageButton.Visibility = ViewStates.Gone;
 
 			}
 			if (MomentsManager.GetMoments ().Count > 0) {
-				_historyButton.Visibility = ViewStates.Visible;
+				_historyImageButton.Visibility = ViewStates.Visible;
 
 			} else {
-				_historyButton.Visibility = ViewStates.Invisible;
+				_historyImageButton.Visibility = ViewStates.Gone;
 			}
 			if (_nonConfiguration._isLoggedIn) {
-				_loginButton.Visibility = ViewStates.Invisible;
+				_loginImageButton.Visibility = ViewStates.Gone;
 				_userTextView.Text = _nonConfiguration._profileName;
 			} else {
-				_loginButton.Visibility = ViewStates.Visible;
+				_loginImageButton.Visibility = ViewStates.Visible;
 				_userTextView.Text = "";
 			}
 		}
@@ -366,9 +368,9 @@ namespace MomentsApp
 
 				} else {
 					if (_nonConfiguration._moment == null) {
-						_saveButton.Visibility = ViewStates.Gone;
+						_saveImageButton.Visibility = ViewStates.Gone;
 					} else {
-						_saveButton.Visibility = ViewStates.Visible;
+						_saveImageButton.Visibility = ViewStates.Visible;
 					}
 				}
 				break;

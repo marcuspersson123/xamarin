@@ -4,34 +4,35 @@
     android:minHeight="25px"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:id="@+id/scrollView1">
+    android:id="@+id/scrollView1"
+    android:fillViewport="true">
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:background="#fffffef4">
-        <TextView
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/timeTextView"
-            android:gravity="center_horizontal"
-            android:text="Måndagen den 20/4 2014"
-            android:textColor="#ff000000"
-            android:typeface="normal" />
-        <TextView
-            android:text="User: marcuspersson"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/timeTextView"
-            android:id="@+id/userTextView"
-            android:gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal">
+            <Button
+                android:text="Login to Facebook"
+                android:id="@+id/loginButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:text="User: marcuspersson"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#ff000000"
+                android:layout_gravity="center_vertical"
+                android:id="@+id/userTextView" />
+        </LinearLayout>
         <ImageView
-            android:src="@android:drawable/ic_menu_gallery"
             android:layout_width="200.0dp"
             android:layout_height="110.0dp"
-            android:layout_below="@id/userTextView"
             android:id="@+id/photoImageView"
             android:adjustViewBounds="true"
             android:layout_marginBottom="5.0dp"
@@ -39,91 +40,106 @@
             android:layout_marginTop="5.0dp"
             android:layout_marginLeft="20.0dp"
             android:layout_gravity="center_horizontal" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/timeTextView"
+            android:gravity="center_horizontal"
+            android:text="Måndagen den 20/4 2014"
+            android:textColor="#ff999999"
+            android:typeface="normal" />
         <LinearLayout
             android:orientation="horizontal"
             android:minWidth="25px"
             android:minHeight="25px"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:gravity="center_vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/photoImageView"
-            android:id="@+id/linearLayout1"
-            android:layout_weight="1">
+            android:layout_height="100dp"
+            android:id="@+id/linearLayout1">
             <TextView
                 android:text="Note:"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/textView1"
-                android:textColor="#ff090000"
-                android:gravity="center_vertical" />
+                android:textColor="#ff090000" />
             <EditText
                 android:inputType="textMultiLine"
                 android:id="@+id/noteEditText"
-                android:layout_weight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="top"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center_vertical"
                 android:textColor="#ff63648e"
-                android:text="test" />
+                android:text="test"
+                android:background="#fff4f4f4" />
         </LinearLayout>
-        <RelativeLayout
-            android:minWidth="25px"
-            android:minHeight="25px"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:id="@+id/relativeLayout1">
-            <Button
-                android:text="Save locally"
-                android:id="@+id/saveButton"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:textColor="#fff3648e" />
-            <Button
-                android:text="Delete"
-                android:id="@+id/deleteButton"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_toRightOf="@id/saveButton"
-                android:textColor="#fff3648e" />
-            <Button
-                android:text="Share to FB"
-                android:id="@+id/shareButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:textColor="#ff63648e" />
-            <Button
-                android:text="My location"
-                android:id="@+id/currentLocationButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@id/saveButton"
-                android:textColor="#ff63648e" />
-            <Button
-                android:text="History..."
-                android:id="@+id/historyButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_below="@id/shareButton"
-                android:textColor="#ff63648e" />
-            <Button
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal">
+            <ImageButton
                 android:text="New moment"
                 android:id="@+id/newButton"
+                android:minWidth="55.0dp"
+                android:minHeight="50.0dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@id/currentLocationButton"
-                android:textColor="#ff63648e" />
-            <Button
-                android:text="Login to FB"
+                android:textColor="#ffffffff"
+                android:background="@android:drawable/ic_menu_camera" />
+            <ImageButton
+                android:text="Save locally"
+                android:id="@+id/saveButton"
+                android:minWidth="55.0dp"
+                android:minHeight="50.0dp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textColor="#ffffffff"
+                android:background="@android:drawable/ic_menu_save" />
+            <ImageButton
+                android:text="History..."
+                android:id="@+id/historyButton"
+                android:layout_width="55.0dp"
+                android:layout_height="50.0dp"
+                android:textColor="#ffffffff"
+                android:background="@drawable/ic_menu_find_holo_light" />
+            <ImageButton
+                android:text="Delete"
+                android:id="@+id/deleteButton"
+                android:minWidth="55.0dp"
+                android:minHeight="50.0dp"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textColor="#ffffffff"
+                android:background="@android:drawable/ic_delete" />
+            <ImageButton
+                android:text="Share to FB"
+                android:id="@+id/shareButton"
+                android:minWidth="45.0dp"
+                android:minHeight="35.0dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/loginButton"
-                android:layout_below="@id/historyButton"
-                android:layout_alignParentRight="true" />
-        </RelativeLayout>
+                android:textColor="#ffffffff"
+                android:background="@android:drawable/ic_menu_share" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="bottom|right"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+            <ImageButton
+                android:text="My location"
+                android:id="@+id/currentLocationButton"
+                android:minWidth="55.0dp"
+                android:minHeight="50.0dp"
+                android:layout_gravity="right|bottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ffffffff"
+                android:background="@android:drawable/ic_menu_mylocation" />
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

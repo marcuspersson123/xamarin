@@ -151,9 +151,9 @@ namespace MomentsApp.Core
 						command.Parameters.Add (new SqliteParameter (DbType.Binary) { Value = photoBytes });
 						command.ExecuteNonQuery ();
 						using (var command2 = _connection.CreateCommand ()) {
-							command2.CommandText = "SELECT last_insert_rowid();";
+							command2.CommandText = "SELECT last_insert_rowid() AS INT;";
 							var result = command2.ExecuteScalar ();
-							updateId = (int)result ;
+							updateId = Convert.ToInt32(result) ;
 						}
 					}
 					_connection.Close ();

@@ -58,7 +58,7 @@ namespace MomentsApp
 		LocationManager _locationManager;
 		string _locationProvider;
 
-	
+		/*
 		public void publishToGallery ()
 		{
 			// make it available in the gallery
@@ -68,6 +68,7 @@ namespace MomentsApp
 			SendBroadcast (mediaScanIntent);
 
 		}
+		*/
 
 		public bool IsThereAnAppToTakePictures ()
 		{
@@ -121,17 +122,24 @@ namespace MomentsApp
 		{
 			_nonConfiguration._fb.PostCompleted += (o, e) => {
 				if (e.Cancelled || e.Error != null) {
+					Toast.MakeText(this, "Sharing failed!", ToastLength.Long).Show();
 					return;
 				}
+				RunOnUiThread (() => {
+					Toast.MakeText(this, "Moment is shared!", ToastLength.Long).Show();
+				});
+
+
 				var result = e.GetResultData ();
 			};
 
 			var parameters = new Dictionary<string, object> ();
-			parameters ["message"] = "-- "+_nonConfiguration._moment.Time+" --"+ _nonConfiguration._moment.Note;
+			parameters ["message"] = "Photo was taken: "+_nonConfiguration._moment.Time+", at location: " + _nonConfiguration._moment.Latitude+","+_nonConfiguration._moment.Longitude +  " , note: " + _nonConfiguration._moment.Note;
 			parameters ["file"] = new FacebookMediaObject {
 				ContentType = "image/jpeg",
 				FileName = "image.jpeg"
 			}.SetValue (_nonConfiguration._photoBytes);
+			Toast.MakeText(this, "Sending moment...", ToastLength.Long).Show();
 			_nonConfiguration._fb.PostTaskAsync ("me/photos", parameters);
 		}
 
@@ -205,6 +213,7 @@ namespace MomentsApp
 				MomentsManager.DeleteMoment (_nonConfiguration._moment.ID);
 				RunOnUiThread (() => {
 					_nonConfiguration._moment = null;
+					Toast.MakeText(this, "Deleted!", ToastLength.Long).Show();
 					UpdateUI ();
 				});
 			});
@@ -385,6 +394,7 @@ namespace MomentsApp
 							_nonConfiguration._profileName = "FB profile: " + (string)result ["name"];
 							_nonConfiguration._isLoggedIn = true;
 							RunOnUiThread (() => {
+								Toast.MakeText(this, "Logged in!", ToastLength.Long).Show();
 								UpdateUI ();
 							});
 
@@ -392,8 +402,9 @@ namespace MomentsApp
 						} else {
 							_nonConfiguration._isLoggedIn = false;
 							RunOnUiThread (() => {
-								Alert ("Failed to Log In", "Reason: " + error, false, (res) => {
-								});
+								Toast.MakeText(this, "Not logged in!", ToastLength.Long).Show();
+								//Alert ("Failed to Log In", "Reason: " + error, false, (res) => {
+								//});
 							});
 						}
 					});
@@ -409,8 +420,9 @@ namespace MomentsApp
 			ThreadPool.QueueUserWorkItem (o => {
 				int id = MomentsManager.SaveMoment (_nonConfiguration._moment, _nonConfiguration._photoBytes);
 				RunOnUiThread (() => {
-					//_nonConfiguration._moment = MomentsManager.GetMoment
+					Toast.MakeText(this, "Saved", ToastLength.Long).Show();
 					_nonConfiguration._moment.ID = id;
+
 					UpdateUI();
 				});
 			});

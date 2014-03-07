@@ -18,10 +18,7 @@ namespace MomentsApp.Core
 
 		protected MomentsRepositoryADO ()
 		{
-			// set the db location
 			dbLocation = DatabaseFilePath;
-
-			// instantiate the database	
 			db = new MomentDatabase(dbLocation);
 		}
 

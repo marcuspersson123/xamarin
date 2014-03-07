@@ -37,29 +37,9 @@ namespace MomentsApp.Core
 
 		public MomentDatabase (string dbPath)
 		{
-			var output = "";
 			_sqlitePath = dbPath;
-
-
-
-
-
-
-			//	File.Delete (dbPath);
-
-
-
-
-
-
+			//File.Delete (dbPath);
 			bool exists = File.Exists (dbPath);
-
-
-
-
-
-
-
 			if (!exists) {
 				_connection = new SqliteConnection ("Data Source=" + dbPath);
 
@@ -74,7 +54,6 @@ namespace MomentsApp.Core
 					}
 				}
 			} 
-			Console.WriteLine (output);
 		}
 
 		Moment GetMomentFromReader (SqliteDataReader reader)
@@ -140,11 +119,12 @@ namespace MomentsApp.Core
 
 		public int SaveMoment (Moment moment, byte[] photoBytes)
 		{
-			int rowsAffected;
+			//int rowsAffected;
 			lock (_locker) {
-				if (moment.ID != 0) {
+				if (moment.ID >= 0) {
 					_connection = new SqliteConnection ("Data Source=" + _sqlitePath);
 					_connection.Open ();
+
 					using (var command = _connection.CreateCommand ()) {
 						command.CommandText = "UPDATE [Moments] SET [note] = ?, [longitude] = ?, [latitude] = ?, [time] = ?, [image] = ? WHERE [_id] = ?;";
 						command.Parameters.Add (new SqliteParameter (DbType.String) { Value = moment.Note });
@@ -153,13 +133,15 @@ namespace MomentsApp.Core
 						command.Parameters.Add (new SqliteParameter (DbType.String) { Value = moment.Time });
 						command.Parameters.Add (new SqliteParameter (DbType.Binary) { Value = photoBytes });
 						command.Parameters.Add (new SqliteParameter (DbType.Int32) { Value = moment.ID });
-						rowsAffected = command.ExecuteNonQuery ();
+						command.ExecuteNonQuery ();
+
 					}
 					_connection.Close ();
-					return rowsAffected;
+					return moment.ID;
 				} else {
 					_connection = new SqliteConnection ("Data Source=" + _sqlitePath);
 					_connection.Open ();
+					int updateId = -1;
 					using (var command = _connection.CreateCommand ()) {
 						command.CommandText = "INSERT INTO [Moments] ([note], [longitude], [latitude], [time], [image]) VALUES (? ,?, ?, ?, ?)";
 						command.Parameters.Add (new SqliteParameter (DbType.String) { Value = moment.Note });
@@ -167,10 +149,15 @@ namespace MomentsApp.Core
 						command.Parameters.Add (new SqliteParameter (DbType.String) { Value = moment.Latitude });
 						command.Parameters.Add (new SqliteParameter (DbType.String) { Value = moment.Time });
 						command.Parameters.Add (new SqliteParameter (DbType.Binary) { Value = photoBytes });
-						rowsAffected = command.ExecuteNonQuery ();
+						command.ExecuteNonQuery ();
+						using (var command2 = _connection.CreateCommand ()) {
+							command2.CommandText = "SELECT last_insert_rowid();";
+							var result = command2.ExecuteScalar ();
+							updateId = (int)result ;
+						}
 					}
 					_connection.Close ();
-					return rowsAffected;
+					return updateId;
 				}
 
 			}

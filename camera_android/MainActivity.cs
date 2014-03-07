@@ -161,7 +161,9 @@ namespace MomentsApp
 				_nonConfiguration = new NonConfiguration ();
 			}
 
-			_deleteButton.Visibility = ViewStates.Gone;
+			//_deleteButton.Visibility = ViewStates.Gone;
+
+			_deleteButton.Click += DeleteButtonClick;
 			_shareButton.Click += ShareButtonClick;
 			_historyButton.Click += HistoryButtonClick;
 			_loginButton.Click += LoginButtonClick;
@@ -194,6 +196,18 @@ namespace MomentsApp
 			_isChangingOrientation = true;
 			base.OnRetainNonConfigurationInstance ();
 			return (Java.Lang.Object)_nonConfiguration;
+		}
+
+		private void DeleteButtonClick (object sender, EventArgs eventArgs)
+		{
+
+			ThreadPool.QueueUserWorkItem (o => {
+				MomentsManager.DeleteMoment (_nonConfiguration._moment.ID);
+				RunOnUiThread (() => {
+					_nonConfiguration._moment = null;
+					UpdateUI ();
+				});
+			});
 		}
 
 		private void NewButtonClick (object sender, EventArgs eventArgs)
@@ -246,6 +260,12 @@ namespace MomentsApp
 			if (_nonConfiguration._moment != null) {
 				_photoImageView.Visibility = ViewStates.Visible;
 				_saveButton.Visibility = ViewStates.Visible;
+
+				if (_nonConfiguration._moment.ID >= 0) {
+					_deleteButton.Visibility = ViewStates.Visible;
+				} else {
+					_deleteButton.Visibility = ViewStates.Invisible;
+				}
 				if (_nonConfiguration._isLoggedIn) {
 					_shareButton.Visibility = ViewStates.Visible;
 				} else {
@@ -273,10 +293,12 @@ namespace MomentsApp
 				_photoImageView.Visibility = ViewStates.Invisible;
 				_saveButton.Visibility = ViewStates.Invisible;
 				_shareButton.Visibility = ViewStates.Invisible;
+				_deleteButton.Visibility = ViewStates.Invisible;
 
 			}
 			if (MomentsManager.GetMoments ().Count > 0) {
 				_historyButton.Visibility = ViewStates.Visible;
+
 			} else {
 				_historyButton.Visibility = ViewStates.Invisible;
 			}
@@ -385,8 +407,10 @@ namespace MomentsApp
 			_nonConfiguration._moment.Note = _noteEditText.Text;
 
 			ThreadPool.QueueUserWorkItem (o => {
-				MomentsManager.SaveMoment (_nonConfiguration._moment, _nonConfiguration._photoBytes);
+				int id = MomentsManager.SaveMoment (_nonConfiguration._moment, _nonConfiguration._photoBytes);
 				RunOnUiThread (() => {
+					//_nonConfiguration._moment = MomentsManager.GetMoment
+					_nonConfiguration._moment.ID = id;
 					UpdateUI();
 				});
 			});

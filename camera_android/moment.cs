@@ -4,11 +4,13 @@ namespace MomentsApp.Core
 {
 	public class Moment
 	{
+		private int _id;
 		public Moment ()
 		{
+			_id = -1;
 		}
 
-		public int ID { get; set; }
+		public int ID { get { return _id; } set { _id = value; } }
 
 		public string Note { get; set; }
 

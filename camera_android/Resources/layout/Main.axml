@@ -3,12 +3,13 @@
     android:minWidth="25px"
     android:minHeight="25px"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
     android:id="@+id/scrollView1">
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="#fffffef4">
         <TextView
             android:layout_width="match_parent"
@@ -23,12 +24,14 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/timeTextView"
             android:id="@+id/userTextView"
             android:gravity="center_horizontal" />
         <ImageView
             android:src="@android:drawable/ic_menu_gallery"
             android:layout_width="200.0dp"
             android:layout_height="110.0dp"
+            android:layout_below="@id/userTextView"
             android:id="@+id/photoImageView"
             android:adjustViewBounds="true"
             android:layout_marginBottom="5.0dp"
@@ -42,6 +45,7 @@
             android:minHeight="25px"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/photoImageView"
             android:id="@+id/linearLayout1"
             android:layout_weight="1">
             <TextView
@@ -66,20 +70,22 @@
             android:minWidth="25px"
             android:minHeight="25px"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
             android:id="@+id/relativeLayout1">
             <Button
                 android:text="Save locally"
                 android:id="@+id/saveButton"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:textColor="#ff63648e" />
+                android:textColor="#fff3648e" />
             <Button
                 android:text="Delete"
                 android:id="@+id/deleteButton"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:textColor="#ff63648e" />
+                android:layout_toRightOf="@id/saveButton"
+                android:textColor="#fff3648e" />
             <Button
                 android:text="Share to FB"
                 android:id="@+id/shareButton"
@@ -93,7 +99,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
+                android:layout_below="@id/saveButton"
                 android:textColor="#ff63648e" />
             <Button
                 android:text="History..."
@@ -101,7 +107,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="true"
+                android:layout_below="@id/shareButton"
                 android:textColor="#ff63648e" />
             <Button
                 android:text="New moment"
@@ -109,14 +115,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentBottom="true"
+                android:layout_below="@id/currentLocationButton"
                 android:textColor="#ff63648e" />
             <Button
                 android:text="Login to FB"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/loginButton"
-                android:layout_centerInParent="true" />
+                android:layout_below="@id/historyButton"
+                android:layout_alignParentRight="true" />
         </RelativeLayout>
     </LinearLayout>
 </ScrollView>

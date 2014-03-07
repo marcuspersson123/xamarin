@@ -41,7 +41,6 @@ namespace MomentsApp
 	{
 		NonConfiguration _nonConfiguration;
 		ImageView _photoImageView;
-		ImageView _mapImageView;
 		EditText _noteEditText;
 		Button _shareButton;
 		Button _newButton;
@@ -245,7 +244,6 @@ namespace MomentsApp
 		void UpdateUI ()
 		{
 			if (_nonConfiguration._moment != null) {
-				_mapImageView.Visibility = ViewStates.Visible;
 				_photoImageView.Visibility = ViewStates.Visible;
 				_saveButton.Visibility = ViewStates.Visible;
 				if (_nonConfiguration._isLoggedIn) {
@@ -253,9 +251,9 @@ namespace MomentsApp
 				} else {
 					_shareButton.Visibility = ViewStates.Invisible;
 				}
-				//if (_nonConfiguration._bitmap != null) {
+
 					_photoImageView.SetImageBitmap (_nonConfiguration._bitmap);
-				//}
+
 				_noteEditText.Text = _nonConfiguration._moment.Note;
 				DateTime momentTime;
 				bool isDateTime = DateTime.TryParse (_nonConfiguration._moment.Time, out momentTime);
@@ -291,6 +289,41 @@ namespace MomentsApp
 			}
 		}
 
+		void NewMoment ()
+		{
+			_nonConfiguration._moment = new MomentsApp.Core.Moment ();
+			DateTime now = DateTime.Now;
+			_nonConfiguration._moment.Time = now.ToString ("yyyy-MM-dd HH:mm:ss");
+
+			if (_nonConfiguration._bitmap != null) {
+				_nonConfiguration._bitmap.Recycle ();
+			}
+
+			_nonConfiguration._bitmap = BitmapFromFile (_file, 400, 400);
+			using (System.IO.MemoryStream stream = new System.IO.MemoryStream ()) {
+				_nonConfiguration._bitmap.Compress (Bitmap.CompressFormat.Png, 0, stream);
+				_nonConfiguration._photoBytes = stream.ToArray ();
+			}
+
+			Location lastLocation = GetLastLocation ();
+
+			string latitudeString = "0.0";
+			string longitudeString = "0.0";
+			if (lastLocation != null) {
+				double latitude = lastLocation.Latitude;
+				double longitude = lastLocation.Longitude;
+				 latitudeString = latitude.ToString ().Replace (",", ".");
+				 longitudeString = longitude.ToString ().Replace (",", ".");
+					
+			} else {
+				Toast.MakeText(this, "Location unavailable", ToastLength.Long).Show();
+			}
+
+			_nonConfiguration._moment.Latitude = latitudeString;
+			_nonConfiguration._moment.Longitude = longitudeString;
+			UpdateUI ();
+		}
+
 		protected override void OnActivityResult (int requestCode, Result resultCode, Intent data)
 		{
 			base.OnActivityResult (requestCode, resultCode, data);
@@ -298,24 +331,8 @@ namespace MomentsApp
 			switch (requestCode) {
 			case 0:  // from camera
 				if (resultCode == Result.Ok) {
+					NewMoment ();
 
-					_nonConfiguration._moment = new MomentsApp.Core.Moment ();
-					DateTime now = DateTime.Now;
-					_nonConfiguration._moment.Time = now.ToString ("yyyy-MM-dd HH:mm:ss");
-
-					if (_nonConfiguration._bitmap != null) {
-						_nonConfiguration._bitmap.Recycle ();
-					}
-
-					_nonConfiguration._bitmap = BitmapFromFile (_file, 400, 400);
-					using (System.IO.MemoryStream stream = new System.IO.MemoryStream ()) {
-						_nonConfiguration._bitmap.Compress (Bitmap.CompressFormat.Png, 0, stream);
-						_nonConfiguration._photoBytes = stream.ToArray ();
-					}
-						
-					_nonConfiguration._moment.Latitude = "1.2";
-					_nonConfiguration._moment.Longitude = "1.3";
-					UpdateUI ();
 				} else {
 					if (_nonConfiguration._moment == null) {
 						_saveButton.Visibility = ViewStates.Gone;

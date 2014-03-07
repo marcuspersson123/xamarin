@@ -18,8 +18,13 @@ using Android.Content.Res;
 using Facebook;
 
 //using System.IO;
+using Android.Locations;
+using System.Globalization;
+
+
 namespace MomentsApp
 {
+
 	public class NonConfiguration : Java.Lang.Object
 	{
 		public Moment _moment;
@@ -43,17 +48,18 @@ namespace MomentsApp
 		Button _saveButton;
 		Button _deleteButton;
 		Button _historyButton;
+		Button _currentLocationButton;
 		TextView _timeTextView;
 		Java.IO.File _file;
 		Java.IO.File _dir;
-		//MomentsApp.Core.Moment _moment;
+	
 		string AppId = "599862353421638";
 		private const string ExtendedPermissions = "user_about_me,read_stream,publish_stream";
 
-		//string accessToken;
+		LocationManager _locationManager;
+		string _locationProvider;
 
-		string lastMessageId;
-
+	
 		public void publishToGallery ()
 		{
 			// make it available in the gallery
@@ -73,7 +79,6 @@ namespace MomentsApp
 
 		void loadAndDisplayMoment (int id)
 		{
-			//List<Moment> moments = (List<Moment>)MomentsManager.GetMoments ();
 			_nonConfiguration._moment = MomentsManager.GetMoment (id);
 			if (_nonConfiguration._moment != null) {
 				//_moment = moments [moments.Count - 1];
@@ -140,7 +145,6 @@ namespace MomentsApp
 			SetContentView (Resource.Layout.Main);
 
 			_photoImageView = FindViewById<ImageView> (Resource.Id.photoImageView);
-			_mapImageView = FindViewById<ImageView> (Resource.Id.mapImageView);
 			_noteEditText = FindViewById<EditText> (Resource.Id.noteEditText);
 			_saveButton = FindViewById<Button> (Resource.Id.saveButton);
 			_deleteButton = FindViewById<Button> (Resource.Id.deleteButton);
@@ -150,11 +154,10 @@ namespace MomentsApp
 			_historyButton = FindViewById<Button> (Resource.Id.historyButton);
 			_userTextView = FindViewById<TextView> (Resource.Id.userTextView);
 			_loginButton = FindViewById<Button> (Resource.Id.loginButton);
+			_currentLocationButton = FindViewById<Button> (Resource.Id.currentLocationButton);
 
 			if (LastNonConfigurationInstance != null) {
 				_nonConfiguration = (NonConfiguration)LastNonConfigurationInstance;
-				//_moment = _nonConfiguration._moment;
-
 			} else {
 				_nonConfiguration = new NonConfiguration ();
 			}
@@ -164,6 +167,7 @@ namespace MomentsApp
 			_historyButton.Click += HistoryButtonClick;
 			_loginButton.Click += LoginButtonClick;
 			_saveButton.Click += SaveButtonClick;
+			_currentLocationButton.Click += CurrentLocationButtonClick;
 
 			_dir = new File (Environment.GetExternalStoragePublicDirectory (Environment.DirectoryPictures), "xamarin_temporary");
 			_file = new File (_dir, "temporary_photo");
@@ -178,6 +182,8 @@ namespace MomentsApp
 				_newButton.Text = "No camera!";
 			}
 
+
+
 			UpdateUI ();
 
 		}
@@ -188,8 +194,6 @@ namespace MomentsApp
 		{
 			_isChangingOrientation = true;
 			base.OnRetainNonConfigurationInstance ();
-			//_nonConfiguration = new NonConfiguration ();
-			//_nonConfiguration.Moment = _moment;
 			return (Java.Lang.Object)_nonConfiguration;
 		}
 
@@ -199,6 +203,38 @@ namespace MomentsApp
 			Intent intent = new Intent (MediaStore.ActionImageCapture);
 			intent.PutExtra (MediaStore.ExtraOutput, Uri.FromFile (_file));
 			StartActivityForResult (intent, 0);
+		}
+
+		private Location GetLastLocation ()
+		{
+			_locationManager = GetSystemService (Context.LocationService) as LocationManager;
+			Criteria locationCriteria = new Criteria ();
+
+			locationCriteria.Accuracy = Accuracy.Coarse;
+			locationCriteria.PowerRequirement = Power.Medium;
+
+			_locationProvider = _locationManager.GetBestProvider (locationCriteria, true);
+			if (_locationProvider != null) {
+				return _locationManager.GetLastKnownLocation (_locationProvider);
+			}
+			return null;
+		}
+
+		private void CurrentLocationButtonClick(object sender, EventArgs eventArgs) {
+			Location lastLocation = GetLastLocation ();
+
+			if (lastLocation != null) {
+				double latitude = lastLocation.Latitude;
+				double longitude = lastLocation.Longitude;
+				string latitudeString = latitude.ToString ().Replace (",", ".");
+				string longitudeString = longitude.ToString ().Replace (",", ".");
+				string locationString = "geo:" + latitudeString + ", " + longitudeString + "?z=15";
+				var geoUri = Android.Net.Uri.Parse (locationString);
+				var mapIntent = new Intent (Intent.ActionView, geoUri);
+				StartActivity (mapIntent);	
+			} else {
+				Toast.MakeText(this, "Location unavailable", ToastLength.Long).Show();
+			}
 		}
 
 		private void HistoryButtonClick (object sender, EventArgs eventArgs)
@@ -235,7 +271,7 @@ namespace MomentsApp
 				_userTextView.Text = "";
 				_timeTextView.Text = "";
 				_noteEditText.Visibility = ViewStates.Invisible;
-				_mapImageView.Visibility = ViewStates.Invisible;
+				//			_mapImageView.Visibility = ViewStates.Invisible;
 				_photoImageView.Visibility = ViewStates.Invisible;
 				_saveButton.Visibility = ViewStates.Invisible;
 				_shareButton.Visibility = ViewStates.Invisible;
@@ -265,35 +301,21 @@ namespace MomentsApp
 
 					_nonConfiguration._moment = new MomentsApp.Core.Moment ();
 					DateTime now = DateTime.Now;
-					//_moment.Time = now.ToString ("dddd d\\/M yyyy");
 					_nonConfiguration._moment.Time = now.ToString ("yyyy-MM-dd HH:mm:ss");
-
-					// från stackoverflow
-					//Bitmap bmp = (Bitmap) data.getExtras().get("data");
-					//img.setImageBitmap(bmp);
 
 					if (_nonConfiguration._bitmap != null) {
 						_nonConfiguration._bitmap.Recycle ();
 					}
 
-					//_photoBytes = _file.ToArray<byte[]> ();
 					_nonConfiguration._bitmap = BitmapFromFile (_file, 400, 400);
 					using (System.IO.MemoryStream stream = new System.IO.MemoryStream ()) {
 						_nonConfiguration._bitmap.Compress (Bitmap.CompressFormat.Png, 0, stream);
 						_nonConfiguration._photoBytes = stream.ToArray ();
 					}
-
-					//_photoBytes = _bitmap.ToArray<byte> ();
-
+						
 					_nonConfiguration._moment.Latitude = "1.2";
 					_nonConfiguration._moment.Longitude = "1.3";
-					//_moment.Note = "detta är ett test";
-					//_moment.Time = "343434";
-
-					//					_saveButton.Visibility = ViewStates.Visible;
 					UpdateUI ();
-
-
 				} else {
 					if (_nonConfiguration._moment == null) {
 						_saveButton.Visibility = ViewStates.Gone;
@@ -316,18 +338,11 @@ namespace MomentsApp
 
 					_nonConfiguration._fb = new FacebookClient (_nonConfiguration._accessToken);
 
-					//ImageView imgUser = FindViewById<ImageView> (Resource.Id.imgUser);
-					//serName = FindViewById<TextView> (Resource.Id.txtvUserName);
-
 					_nonConfiguration._fb.GetTaskAsync ("me").ContinueWith (t => {
 						if (!t.IsFaulted) {
-
 							var result = (IDictionary<string, object>)t.Result;
 
-							// available picture types: square (50x50), small (50xvariable height), large (about 200x variable height) (all size in pixels)
-							// for more info visit http://developers.facebook.com/docs/reference/api
 							string profilePictureUrl = string.Format ("https://graph.facebook.com/{0}/picture?type={1}&access_token={2}", userId, "square", _nonConfiguration._accessToken);
-							//var bm = BitmapFactory.DecodeStream (new Java.Net.URL (profilePictureUrl).OpenStream ());
 							_nonConfiguration._profileName = "FB profile: " + (string)result ["name"];
 							_nonConfiguration._isLoggedIn = true;
 							RunOnUiThread (() => {

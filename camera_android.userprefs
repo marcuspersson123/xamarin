@@ -2,15 +2,9 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="camera_android/MainActivity.cs" Line="331" Column="58" />
-      <File FileName="camera_android/MomentsActivity.cs" Line="14" Column="33" />
-      <File FileName="camera_android/MomentsArrayAdapter.cs" Line="1" Column="1" />
-      <File FileName="camera_android/MomentsManager.cs" Line="1" Column="1" />
-      <File FileName="camera_android/MomentsRepositoryADO.cs" Line="1" Column="1" />
-      <File FileName="camera_android/MomentDatabase.cs" Line="1" Column="1" />
-      <File FileName="camera_android/FBWebViewAuthActivity.cs" Line="18" Column="21" />
+      <File FileName="camera_android/MainActivity.cs" Line="216" Column="27" />
+      <File FileName="camera_android/EmptyClass.cs" Line="1" Column="1" />
       <File FileName="camera_android/Properties/AndroidManifest.xml" Line="1" Column="1" />
-      <File FileName="camera_android/Properties/AssemblyInfo.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -49,6 +49,7 @@
     <Reference Include="Facebook">
       <HintPath>..\..\..\..\Downloads\facebook-sdk-6.2.1\lib\android\Facebook.dll</HintPath>
     </Reference>
+    <Reference Include="Mono.Android.GoogleMaps" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />

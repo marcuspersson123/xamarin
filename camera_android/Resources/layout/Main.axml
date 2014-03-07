@@ -73,22 +73,13 @@
                 android:gravity="center_vertical"
                 android:textColor="#ff63648e"
                 android:text="test"
-                android:background="#fff4f4f4" />
+                android:background="#ffe2e2e2" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_horizontal">
-            <ImageButton
-                android:text="New moment"
-                android:id="@+id/newButton"
-                android:minWidth="55.0dp"
-                android:minHeight="50.0dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#ffffffff"
-                android:background="@android:drawable/ic_menu_camera" />
             <ImageButton
                 android:text="Save locally"
                 android:id="@+id/saveButton"
@@ -98,13 +89,6 @@
                 android:layout_width="wrap_content"
                 android:textColor="#ffffffff"
                 android:background="@android:drawable/ic_menu_save" />
-            <ImageButton
-                android:text="History..."
-                android:id="@+id/historyButton"
-                android:layout_width="55.0dp"
-                android:layout_height="50.0dp"
-                android:textColor="#ffffffff"
-                android:background="@drawable/ic_menu_find_holo_light" />
             <ImageButton
                 android:text="Delete"
                 android:id="@+id/deleteButton"
@@ -123,13 +107,6 @@
                 android:layout_height="wrap_content"
                 android:textColor="#ffffffff"
                 android:background="@android:drawable/ic_menu_share" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="bottom|right"
-            android:layout_weight="1"
-            android:orientation="horizontal">
             <ImageButton
                 android:text="My location"
                 android:id="@+id/currentLocationButton"
@@ -140,6 +117,29 @@
                 android:layout_height="wrap_content"
                 android:textColor="#ffffffff"
                 android:background="@android:drawable/ic_menu_mylocation" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="bottom|right"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+            <ImageButton
+                android:text="History..."
+                android:id="@+id/historyButton"
+                android:layout_width="55.0dp"
+                android:layout_height="50.0dp"
+                android:textColor="#ffffffff"
+                android:background="@drawable/ic_menu_find_holo_light" />
+            <ImageButton
+                android:text="New moment"
+                android:id="@+id/newButton"
+                android:minWidth="55.0dp"
+                android:minHeight="50.0dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ffffffff"
+                android:background="@android:drawable/ic_menu_camera" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

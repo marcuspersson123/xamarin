@@ -247,8 +247,8 @@ namespace MomentsApp
 			Location lastLocation = GetLastLocation ();
 
 			if (lastLocation != null) {
-				double latitude = lastLocation.Latitude;
-				double longitude = lastLocation.Longitude;
+				string latitude = _nonConfiguration._moment.Latitude;
+				string longitude = _nonConfiguration._moment.Longitude;
 				string latitudeString = latitude.ToString ().Replace (",", ".");
 				string longitudeString = longitude.ToString ().Replace (",", ".");
 				string locationString = "geo:" + latitudeString + ", " + longitudeString + "?z=15";
@@ -270,6 +270,7 @@ namespace MomentsApp
 			if (_nonConfiguration._moment != null) {
 				//_photoImageView.Visibility = ViewStates.Visible;
 				_saveImageButton.Visibility = ViewStates.Visible;
+				_currentLocationImageButton.Visibility = ViewStates.Visible;
 
 				if (_nonConfiguration._moment.ID >= 0) {
 					_deleteImageButton.Visibility = ViewStates.Visible;
@@ -303,6 +304,7 @@ namespace MomentsApp
 				//			_mapImageView.Visibility = ViewStates.Gone;
 				_photoImageView.SetBackgroundResource(Android.Resource.Drawable.IcMenuGallery);
 				_saveImageButton.Visibility = ViewStates.Gone;
+				_currentLocationImageButton.Visibility = ViewStates.Gone;
 				_shareImageButton.Visibility = ViewStates.Gone;
 				_deleteImageButton.Visibility = ViewStates.Gone;
 
@@ -393,7 +395,7 @@ namespace MomentsApp
 							var result = (IDictionary<string, object>)t.Result;
 
 							string profilePictureUrl = string.Format ("https://graph.facebook.com/{0}/picture?type={1}&access_token={2}", userId, "square", _nonConfiguration._accessToken);
-							_nonConfiguration._profileName = "FB profile: " + (string)result ["name"];
+							_nonConfiguration._profileName = "Username: " + (string)result ["name"];
 							_nonConfiguration._isLoggedIn = true;
 							RunOnUiThread (() => {
 								Toast.MakeText(this, "Logged in!", ToastLength.Long).Show();
